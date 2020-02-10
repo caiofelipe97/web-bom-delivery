@@ -51,16 +51,15 @@ const theme = createMuiTheme({
   })
 
 const Login = (props) => {
-    const { classes, loginError, isAuthenticated } = props;
+    const { classes, loginError, isAuthenticated,loginErrorMessage } = props;
     const  [email, setEmail] = useState("");
     const  [password, setPassword] = useState("");
-    
+    console.log(isAuthenticated);
     const handleSubmit = (e) => {
         e.preventDefault();
         
         const { dispatch } = props;
-        const response = dispatch(loginUser(email, password));
-        console.log(response)
+        dispatch(loginUser(email, password));
     };
 
     if (isAuthenticated) {
@@ -72,7 +71,7 @@ const Login = (props) => {
       <CardHeader classes={{
           title: classes.title,
         }} title="Bom Delivery" titleTypographyProps={{align:"center", variant:'h2'}}
-/>
+        />
       <CardContent>
       <form  onSubmit={handleSubmit}>
       <ThemeProvider theme={theme}>
@@ -106,7 +105,7 @@ const Login = (props) => {
             </ThemeProvider>
             {loginError && (
               <Typography component="p" className={classes.errorText}>
-                Email ou senha incorretos
+                {loginErrorMessage}
               </Typography>
             )}
           <Button
@@ -131,7 +130,8 @@ function mapStateToProps(state) {
     return {
       isLoggingIn: state.auth.isLoggingIn,
       loginError: state.auth.loginError,
-      isAuthenticated: state.auth.isAuthenticated
+      isAuthenticated: state.auth.isAuthenticated,
+      loginErrorMessage: state.auth.loginErrorMessage
     };
 }
 export default withStyles(styles)(connect(mapStateToProps)(Login));

@@ -60,17 +60,33 @@ export const verifySuccess = () => {
     };
 };
 
-export const loginUser = (email, password) => dispatch => {
+export const loginUser = (email, password) => async dispatch => {
     dispatch(requestLogin());
     myFirebase
       .auth()
       .signInWithEmailAndPassword(email, password)
-      .then(user => {
-        dispatch(receiveLogin(user));
+      .then(async user => {
+          
+        const userSnapshot = await myFirebase.firestore().collection('users').doc(user.user.uid).get();
+        const userDoc = userSnapshot.data();
+        console.log(userDoc)
+        if(userDoc.role !== "owner"){
+            dispatch(loginError("O usuário não tem permissão para fazer login nesse sistema"))
+        } else {
+            const { photoURL, displayName, email, uid } = user
+            const userLogged = {
+                uid,
+                name: displayName,
+                email,
+                picUrl: photoURL,
+                retaurantId: userDoc.restaurantId,
+                role: userDoc.role
+            }
+            dispatch(receiveLogin(userLogged));
+        }
       })
       .catch(error => {
-        //Do something with the error if you want!
-        dispatch(loginError(error));
+        dispatch(loginError("Email e/ou senha incorretos"));
       });
   };
   
@@ -92,9 +108,26 @@ export const loginUser = (email, password) => dispatch => {
     dispatch(verifyRequest());
     myFirebase
       .auth()
-      .onAuthStateChanged(user => {
+      .onAuthStateChanged( async user => {
         if (user !== null) {
-          dispatch(receiveLogin(user));
+            const userSnapshot = await myFirebase.firestore().collection('users').doc(user.uid).get();
+            const userDoc = userSnapshot.data();
+            if(userDoc.role !== "owner"){
+                dispatch(logoutUser());
+                dispatch(loginError("O usuário não tem permissão para fazer login nesse sistema"))
+            } else {
+                const { photoURL, displayName, email, uid } = user
+                const userLogged = {
+                    uid,
+                    name: displayName,
+                    email,
+                    picUrl: photoURL,
+                    retaurantId: userDoc.restaurantId,
+                    role: userDoc.role
+                }
+                dispatch(receiveLogin(userLogged));
+
+            }
         }
         dispatch(verifySuccess());
       });
