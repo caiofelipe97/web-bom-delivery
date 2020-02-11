@@ -12,14 +12,14 @@ function App(props) {
     <div>
       <Router>
         <Switch>
+        <Route path="/login" component={Login} />
+
           <ProtectedRoute
-          exact
           path="/"
           component={Home}
           isAuthenticated={isAuthenticated}
           isVerifying={isVerifying}
         />
-          <Route path="/login" component={Login} />
         </Switch>
       </Router>
     </div>

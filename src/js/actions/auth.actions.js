@@ -1,4 +1,5 @@
 import { myFirebase } from "../firebase/firebase";
+import { getRestaurant } from "./restaurant.actions";
 
 export const LOGIN_REQUEST = "LOGIN_REQUEST";
 export const requestLogin = () => {
@@ -66,24 +67,7 @@ export const loginUser = (email, password) => async dispatch => {
       .auth()
       .signInWithEmailAndPassword(email, password)
       .then(async user => {
-          
-        const userSnapshot = await myFirebase.firestore().collection('users').doc(user.user.uid).get();
-        const userDoc = userSnapshot.data();
-        console.log(userDoc)
-        if(userDoc.role !== "owner"){
-            dispatch(loginError("O usuário não tem permissão para fazer login nesse sistema"))
-        } else {
-            const { photoURL, displayName, email, uid } = user
-            const userLogged = {
-                uid,
-                name: displayName,
-                email,
-                picUrl: photoURL,
-                retaurantId: userDoc.restaurantId,
-                role: userDoc.role
-            }
-            dispatch(receiveLogin(userLogged));
-        }
+
       })
       .catch(error => {
         dispatch(loginError("Email e/ou senha incorretos"));
@@ -125,6 +109,7 @@ export const loginUser = (email, password) => async dispatch => {
                     retaurantId: userDoc.restaurantId,
                     role: userDoc.role
                 }
+                dispatch(getRestaurant(userDoc.restaurantId));
                 dispatch(receiveLogin(userLogged));
 
             }
