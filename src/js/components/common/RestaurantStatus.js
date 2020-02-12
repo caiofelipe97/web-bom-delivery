@@ -23,8 +23,9 @@ const styles = {
                 backgroundColor: '#f3f3f3'
             },
         },
-
 }
+
+
 const RestaurantStatus  = ({open, classes}) => {
     console.log(open)
     return(  

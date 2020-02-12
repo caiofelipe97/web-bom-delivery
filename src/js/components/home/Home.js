@@ -98,7 +98,7 @@ const Home = (props) => {
     <div className={classes.toolbar } />
     <Divider />
     <List >
-      {[ {route: '/' ,text:'Ínicio'}, {route: '/profile' ,text:'Loja'}, {route: '/menu' ,text:'Cardápio'}].map((el, index) => (
+      {[ {route: '/' ,text:'Ínicio'}, {route: '/profile' ,text:'Perfil'}, {route: '/menu' ,text:'Cardápio'}].map((el, index) => (
         <NavLink   to={el.route} key={index} className={classes.linkStyle} >
           <ListItem button key={index} className={location.pathname === el.route ? classes.activeStyle : classes.inactiveStyle}>
             <ListItemText primary={el.text} />

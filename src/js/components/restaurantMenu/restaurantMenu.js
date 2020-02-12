@@ -4,7 +4,7 @@ import React from 'react';
 
 const RestaurantMenu = () => {
     return(
-        <h1>Restaurant Menu</h1>
+        <h1>Cardápio</h1>
     )
 }
 
