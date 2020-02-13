@@ -1,13 +1,11 @@
 import React, { useState, useEffect } from "react";
-import {TextField, FormControl, Button, Input, FormControlLabel, FormLabel, FormGroup, FormHelperText, InputAdornment} from '@material-ui/core';
+import { Button} from '@material-ui/core';
 import { connect } from "react-redux";
 import { CardMedia } from '@material-ui/core';
 import { makeStyles} from '@material-ui/core/styles';
-import {OPTIONS_ENUM} from '../../utils/constants';
-import OutlinedDiv from '../common/OutlinedDiv';
-import Checkbox from '@material-ui/core/Checkbox';
 import StoreForm from './StoreForm';
 import AddressForm from "./AddressForm";
+import DeliveryForm from "./DeliveryForm";
 
 const useStyles = makeStyles(theme => ({
   formFlexbox:{
@@ -52,7 +50,6 @@ const useStyles = makeStyles(theme => ({
       display: 'flex',
       flexDirection:'row',
       justifyContent: 'space-between'
-
     },
     timeFormGroup:{
       justifyContent: 'space-around'
@@ -86,13 +83,13 @@ const Profile = (props) => {
     const  [city, setCity] = useState("");
     const  [state, setState] = useState("");
 
-    const [paymentMethods, setPaymentMethods] = useState({});
+    const [paymentMethods, setPaymentMethods] = useState([]);
     const [timeToDelivery, setTimeToDelivery] = useState({min:0, max:0});
     const [deliveryPrice, setDeliveryPrice] = useState(0);
 
     useEffect(() => {
       if(Object.entries(restaurant).length !== 0 && restaurant.constructor === Object){
-        const {name, foods} = restaurant;
+        const {name, foods, timeToDelivery, deliveryPrice, paymentMethods} = restaurant;
         setName(name);
         setFoods(foods)
         if(Object.entries(restaurant.address).length !== 0){
@@ -103,6 +100,9 @@ const Profile = (props) => {
           setCity(city);
           setState(state);
         }
+        setTimeToDelivery(timeToDelivery);
+        setDeliveryPrice(deliveryPrice);
+        setPaymentMethods(paymentMethods);
       }
     },[restaurant]);
 
@@ -148,89 +148,14 @@ const Profile = (props) => {
         state={state}
         setState={setState}
         />    
-    <OutlinedDiv label={"Entrega"} className={classes.outlinedDiv}>
-    <div>
-      
-    </div>
-    <div className={classes.deliveryDiv}>
-       
-        <div className={classes.smallFormControl}>
-        <FormLabel component="legend">Tempo de entrega (Em minutos)</FormLabel>
-        <FormGroup row className={classes.timeFormGroup}>
-        <FormControl className={classes.tinyFormControl}>
-              <TextField
-                    margin="normal"
-                    id="min-input"
-                    label="Tempo Mínimo"
-                    name="min"
-                    type="number"
-                    InputLabelProps={{
-                      style:{
-                        whiteSpace: "noWrap"
-                      }
-                    }}
-                    value={timeToDelivery.min}
-                    onChange={e => setTimeToDelivery({...timeToDelivery, min: e.target.value})}
-                />
-            </FormControl>
-    
-
-            <FormControl className={classes.tinyFormControl}>
-              <TextField
-                    margin="normal"
-                    id="max-input"
-                    label="Tempo Máximo"
-                    name="max"
-                    type="number"
-                    InputLabelProps={{
-                      style:{
-                        whiteSpace: "noWrap"
-                      }
-                    }}
-                    value={timeToDelivery.max}
-                    onChange={e => setTimeToDelivery({...timeToDelivery, max: e.target.value})}
-                />
-            </FormControl>
-          </FormGroup>
-        </div>
-        <div className={classes.smallFormControl}>
-
-        <FormLabel component="legend">Valor da entrega</FormLabel>
-        
-        <FormControl className={[classes.tinyFormControl, classes.deliveryPriceInput]}>
-              <Input
-                id="delivery-price-inputt"
-                type="number"
-                value={deliveryPrice}
-                onChange={e=>setDeliveryPrice(e.target.value)}
-                endAdornment={<InputAdornment position="start">R$</InputAdornment>}
-              />
-          </FormControl>
-          <FormHelperText>Este valor sempre será cobrado no final da compra no estabelecimento</FormHelperText>
-            </div>
-      </div>
-      <div className={classes.paymentMethodsDiv}>
-      <FormLabel component="legend">Formas de pagamento</FormLabel>
-
-      <FormGroup row>
-
-      <FormControlLabel
-        control={
-          <Checkbox onChange={()=>{}} value="checkedA" />
-        }
-        label="Dinheiro"
-        />
-      <FormControlLabel
-        control={
-          <Checkbox onChange={()=>{}}value="checkedA" />
-        }
-        label="Máquina Móvel"
-      />
-              </FormGroup>
-        
-        </div>
-
-      </OutlinedDiv>    
+        <DeliveryForm 
+          timeToDelivery={timeToDelivery}
+          setTimeToDelivery={setTimeToDelivery}
+          deliveryPrice={deliveryPrice}
+          setDeliveryPrice={setDeliveryPrice}
+          paymentMethods={paymentMethods}
+          setPaymentMethods={setPaymentMethods}
+        />    
       <div className={classes.buttons}>
         <Button variant="contained"  color="secondary" type="submit">Salvar</Button>
         <Button className={classes.cancelButton} variant="contained" >cancelar</Button>
