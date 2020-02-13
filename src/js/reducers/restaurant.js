@@ -1,7 +1,10 @@
 import {
     GET_RESTAURANT_REQUEST,
     GET_RESTAURANT_SUCCESS,
-    GET_RESTAURANT_FAILURE
+    GET_RESTAURANT_FAILURE,
+    EDIT_RESTAURANT_REQUEST,
+    EDIT_RESTAURANT_SUCCESS,
+    EDIT_RESTAURANT_FAILURE
   } from "../actions/";
 
 
@@ -14,25 +17,41 @@ export default (
     action
   ) => {
     switch (action.type) {
-        case GET_RESTAURANT_REQUEST:
-            return {
-              ...state,
-              loading: true
-            };
-            case GET_RESTAURANT_SUCCESS:
-                return {
-                    ...state,
-                    loading: false,
-                    restaurant: action.restaurant
-                };
-            case GET_RESTAURANT_FAILURE:
-                return {
-                    ...state,
-                    errorMessage: action.error,
-                    loading: false
-                };
-                    
-        default:
-            return state;
+      case GET_RESTAURANT_REQUEST:
+        return {
+          ...state,
+          loading: true
+        };
+      case GET_RESTAURANT_SUCCESS:
+        return {
+          ...state,
+          loading: false,
+          restaurant: action.restaurant
+        };
+      case GET_RESTAURANT_FAILURE:
+        return {
+          ...state,
+          errorMessage: action.error,
+          loading: false
+        };
+      case EDIT_RESTAURANT_REQUEST:
+        return {
+          ...state,
+          loading: true
+        };
+      case EDIT_RESTAURANT_SUCCESS:
+        return {
+          ...state,
+          loading:false,
+          errorMessage: ""
+        };
+      case EDIT_RESTAURANT_FAILURE:
+        return{
+          ...state,
+          loading:false,
+          errorMessage: action.error
         }
+      default:
+          return state;
+      }
     };
