@@ -3,7 +3,7 @@ import { connect } from "react-redux";
 import { logoutUser } from "../../actions";
 import { makeStyles} from '@material-ui/core/styles';
 import {AppBar, Toolbar, Drawer, List, Typography, Divider, ListItem, ListItemText} from '@material-ui/core';
-import {  withRouter, Route, Switch, NavLink} from 'react-router-dom';
+import {  Route, Switch, NavLink} from 'react-router-dom';
 
 import RestaurantHeader from '../common/RestaurantHeader';
 import RestaurantStatus from '../common/RestaurantStatus';
@@ -134,4 +134,4 @@ function mapStateToProps(state) {
       restaurant: state.restaurant.restaurant
     };
   }
-export default connect(mapStateToProps)(withRouter(Home));
+export default connect(mapStateToProps)(Home);

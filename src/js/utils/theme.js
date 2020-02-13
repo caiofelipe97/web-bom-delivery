@@ -18,7 +18,7 @@ export const themeOptions = {
             divider: '#e4e4e4',
         },
         error: {
-            main: '#b3001b',
+            main: '#F24405',
         },
     },
     typography: {

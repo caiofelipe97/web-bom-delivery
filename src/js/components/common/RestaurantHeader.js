@@ -1,9 +1,9 @@
 import React from 'react';
 import CardMedia from '@material-ui/core/CardMedia';
-import { withStyles } from '@material-ui/core/styles';
 import Typography from '@material-ui/core/Typography';
+import { makeStyles} from '@material-ui/core/styles';
 
-const styles = {
+const useStyles = makeStyles( _ => ({
     logo: {
         height: 50,
         width: 50,
@@ -15,10 +15,11 @@ const styles = {
     nameStyle:{
         marginLeft: 10
     }
-}
+}))
 
 function RestaurantHeader(props){
-    const {img, name, classes} = props
+    const classes = useStyles();
+    const {img, name} = props
     return(
     <div className={classes.flexDiv}>
       <CardMedia
@@ -35,4 +36,4 @@ function RestaurantHeader(props){
     
 };
 
-export default withStyles(styles)(RestaurantHeader);
+export default RestaurantHeader;

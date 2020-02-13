@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from "react";
-import {TextField, FormControl, Button, InputLabel,Select, MenuItem, Chip, Input, FormControlLabel, FormLabel, FormGroup, FormHelperText, InputAdornment} from '@material-ui/core';
+import {TextField, FormControl, Button, Input, FormControlLabel, FormLabel, FormGroup, FormHelperText, InputAdornment} from '@material-ui/core';
 import { connect } from "react-redux";
 import { CardMedia } from '@material-ui/core';
 import { makeStyles} from '@material-ui/core/styles';
 import {OPTIONS_ENUM} from '../../utils/constants';
 import OutlinedDiv from '../common/OutlinedDiv';
 import Checkbox from '@material-ui/core/Checkbox';
+import StoreForm from './StoreForm';
 
 const useStyles = makeStyles(theme => ({
   formFlexbox:{
@@ -38,15 +39,8 @@ const useStyles = makeStyles(theme => ({
     tinyFormControl:{
       margin: theme.spacing(1),
       marginTop: 0,
-      maxWidth:'20%',
-      minWidth: '10%'
-    },
-    chips: {
-      display: 'flex',
-      flexWrap: 'wrap',
-    },
-    chip: {
-      margin: 2,
+      maxWidth:'25%',
+      minWidth: '15%'
     },
     restaurantDiv:{
       display:'flex',
@@ -81,28 +75,16 @@ const useStyles = makeStyles(theme => ({
       marginTop: 10,
       justifyContent:'flex-end'
     }
-
 }))
-
-const ITEM_HEIGHT = 48;
-const ITEM_PADDING_TOP = 8;
-const MenuProps = {
-    PaperProps: {
-      style: {
-        maxHeight: ITEM_HEIGHT * 4.5 + ITEM_PADDING_TOP,
-        width: 250,
-      },
-    },
-  };
 
 const Profile = (props) => {
     const classes = useStyles();
 
     const { restaurant } = props;
     const  [name, setName] = useState("");
-    const [options, setOptions] = React.useState([]);
+    const [foods, setFoods] = React.useState([]);
 
-    const  [adress, setAdress] = useState("");
+    const  [address, setAddress] = useState("");
     const  [complement, setComplement] = useState("");
     const  [CEP, setCEP] = useState("");
     const  [city, setCity] = useState("");
@@ -112,6 +94,15 @@ const Profile = (props) => {
     const [timeToDelivery, setTimeToDelivery] = useState({min:0, max:0});
     const [deliveryPrice, setDeliveryPrice] = useState(0);
 
+    useEffect(() => {
+      if(Object.entries(restaurant).length !== 0 && restaurant.constructor === Object){
+        const {name, foods, address} = restaurant;
+        setName(name);
+        setFoods(foods);
+        console.log(restaurant)
+      }
+    },[restaurant]);
+
     const handleSubmit = (e) => {
     }
     return(
@@ -120,12 +111,14 @@ const Profile = (props) => {
               
               <form  onSubmit={handleSubmit} className={classes.formFlexbox}>
               <div className={classes.imgDivStyle}>
-              <CardMedia component="img" src={restaurant.img} className={classes.imgStyle}/>
+              {
+                restaurant.img && <CardMedia component="img" src={restaurant.img} className={classes.imgStyle}/>
+              }
                   
                   <Button
                     variant="contained"
                     component="label"
-                    color="secondary"
+                    color="primary"
                     >
                     Trocar Imagem
                     <input
@@ -134,50 +127,7 @@ const Profile = (props) => {
                     />
                     </Button>
               </div>
-          <OutlinedDiv label={"Estabelecimento"} className={classes.outlinedDiv}>
-
-          <div className={classes.restaurantDiv}>
-
-          <FormControl className={classes.formControl}>
-
-              <TextField
-                    margin="normal"
-                    required
-                    fullWidth
-                    id="name"
-                    label="Nome do Estabelecimento"
-                    name="name"
-                    value={name}
-                    onChange={e => setName(e.target.value)}
-                />
-                </FormControl>
-            <FormControl className={classes.formControl}>
-            <InputLabel id="options-tags">Opções do Estabelecimento</InputLabel>
-            <Select
-              labelId="options-tags-label"
-              id="options-tags-select"
-              multiple
-              value={options}
-              onChange={e => setOptions(e.target.value)}
-              input={<Input id="select-multiple-chip" />}
-              renderValue={selected => (
-                <div className={classes.chips}>
-                  {selected.map(value => (
-                    <Chip key={value} label={value} className={classes.chip} />
-                  ))}
-                </div>
-              )}
-              MenuProps={MenuProps}
-            >
-              {OPTIONS_ENUM.map(option => (
-                <MenuItem key={option} value={option}>
-                  {option}
-                </MenuItem>
-              ))}
-            </Select>
-          </FormControl>
-          </div>
-      </OutlinedDiv>
+      <StoreForm name={name} setName={setName} foods={foods} setFoods={setFoods}/>
 
       <OutlinedDiv label={"Endereço"} className={classes.outlinedDiv}>
           <div className={classes.restaurantDiv}>
@@ -186,11 +136,11 @@ const Profile = (props) => {
                     margin="normal"
                     required
                     fullWidth
-                    id="adress"
+                    id="address"
                     label="Endereço"
-                    name="adress"
-                    value={adress}
-                    onChange={e => setAdress(e.target.value)}
+                    name="address"
+                    value={address}
+                    onChange={e => setAddress(e.target.value)}
                 />
             </FormControl>
             <FormControl className={classes.smallFormControl}>
@@ -291,6 +241,7 @@ const Profile = (props) => {
         <FormControl className={[classes.tinyFormControl, classes.deliveryPriceInput]}>
               <Input
                 id="delivery-price-inputt"
+                type="number"
                 value={deliveryPrice}
                 onChange={e=>setDeliveryPrice(e.target.value)}
                 endAdornment={<InputAdornment position="start">R$</InputAdornment>}
