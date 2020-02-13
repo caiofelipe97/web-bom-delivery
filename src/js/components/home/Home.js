@@ -73,7 +73,7 @@ const Home = (props) => {
     <div className={classes.root}>
     <AppBar position="fixed" className={classes.appBar}>
         <div className={classes.firstHeaderStyle}>
-          <Toolbar>
+        <Toolbar>
             <Typography variant="h6" noWrap>
                 Bom delivery
             </Typography>

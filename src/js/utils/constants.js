@@ -11,3 +11,11 @@ export const OPTIONS_ENUM = [
         "Quentinha",
         "Café & Padaria"
 ]
+
+export const STATES_ENUM = [
+        "PB"
+]
+
+export const CITIES_ENUM = [
+        "Alagoa Nova"
+]

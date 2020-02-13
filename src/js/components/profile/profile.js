@@ -7,6 +7,7 @@ import {OPTIONS_ENUM} from '../../utils/constants';
 import OutlinedDiv from '../common/OutlinedDiv';
 import Checkbox from '@material-ui/core/Checkbox';
 import StoreForm from './StoreForm';
+import AddressForm from "./AddressForm";
 
 const useStyles = makeStyles(theme => ({
   formFlexbox:{
@@ -41,11 +42,6 @@ const useStyles = makeStyles(theme => ({
       marginTop: 0,
       maxWidth:'25%',
       minWidth: '15%'
-    },
-    restaurantDiv:{
-      display:'flex',
-      alignItems: 'center',
-      flexWrap: 'wrap'
     },
     outlinedDiv:{
       marginTop: 20,
@@ -84,7 +80,7 @@ const Profile = (props) => {
     const  [name, setName] = useState("");
     const [foods, setFoods] = React.useState([]);
 
-    const  [address, setAddress] = useState("");
+    const  [street, setStreet] = useState("");
     const  [complement, setComplement] = useState("");
     const  [CEP, setCEP] = useState("");
     const  [city, setCity] = useState("");
@@ -96,10 +92,17 @@ const Profile = (props) => {
 
     useEffect(() => {
       if(Object.entries(restaurant).length !== 0 && restaurant.constructor === Object){
-        const {name, foods, address} = restaurant;
+        const {name, foods} = restaurant;
         setName(name);
-        setFoods(foods);
-        console.log(restaurant)
+        setFoods(foods)
+        if(Object.entries(restaurant.address).length !== 0){
+          const {street, complement, CEP, city, state} = restaurant.address;
+          setStreet(street);
+          setComplement(complement);
+          setCEP(CEP);
+          setCity(city);
+          setState(state);
+        }
       }
     },[restaurant]);
 
@@ -127,68 +130,24 @@ const Profile = (props) => {
                     />
                     </Button>
               </div>
-      <StoreForm name={name} setName={setName} foods={foods} setFoods={setFoods}/>
-
-      <OutlinedDiv label={"Endereço"} className={classes.outlinedDiv}>
-          <div className={classes.restaurantDiv}>
-          <FormControl className={classes.formControl}>
-              <TextField
-                    margin="normal"
-                    required
-                    fullWidth
-                    id="address"
-                    label="Endereço"
-                    name="address"
-                    value={address}
-                    onChange={e => setAddress(e.target.value)}
-                />
-            </FormControl>
-            <FormControl className={classes.smallFormControl}>
-              <TextField
-                    margin="normal"
-                    id="complement"
-                    label="Complemento"
-                    name="complement"
-                    value={complement}
-                    onChange={e => setComplement(e.target.value)}
-                />
-            </FormControl>
-          </div>
-          <div className={classes.restaurantDiv}>
-          <FormControl className={classes.formControl}>
-              <TextField
-                    margin="normal"
-                    required
-                    fullWidth
-                    id="cep"
-                    label="CEP"
-                    name="cep"
-                    value={CEP}
-                    onChange={e => setCEP(e.target.value)}
-                />
-            </FormControl>
-            <FormControl className={classes.smallFormControl}>
-              <TextField
-                    margin="normal"
-                    id="city"
-                    label="Cidade"
-                    name="city"
-                    value={city}
-                    onChange={e => setCity(e.target.value)}
-                />
-            </FormControl>
-            <FormControl className={classes.tinyFormControl}>
-              <TextField
-                    margin="normal"
-                    id="state"
-                    label="Estado"
-                    name="state"
-                    value={state}
-                    onChange={e => setState(e.target.value)}
-                />
-            </FormControl>
-          </div>
-      </OutlinedDiv>    
+      <StoreForm 
+        name={name} 
+        setName={setName} 
+        foods={foods} 
+        setFoods={setFoods}
+        />
+      <AddressForm 
+        street={street} 
+        setStreet={setStreet} 
+        complement={complement} 
+        setComplement={setComplement}
+        CEP={CEP}
+        setCEP={setCEP}
+        city={city}
+        setCity={setCity}
+        state={state}
+        setState={setState}
+        />    
     <OutlinedDiv label={"Entrega"} className={classes.outlinedDiv}>
     <div>
       

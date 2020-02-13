@@ -22,15 +22,17 @@ function RestaurantHeader(props){
     const {img, name} = props
     return(
     <div className={classes.flexDiv}>
-      <CardMedia
+        { img && 
+        <CardMedia
         className={classes.logo}
         image={img}
-        title="Live from space album cover"
+        title="Restaurant Name"
       />
-      <Typography variant="h6" noWrap  className={classes.nameStyle}
->
+        }
+      
+      <Typography variant="h6" noWrap  className={classes.nameStyle}>
             {name}
-        </Typography>
+      </Typography>
   </div>
     )
     
