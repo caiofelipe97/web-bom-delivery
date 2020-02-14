@@ -54,7 +54,6 @@ const Login = (props) => {
     const { classes, loginError, isAuthenticated,loginErrorMessage } = props;
     const  [email, setEmail] = useState("");
     const  [password, setPassword] = useState("");
-    console.log(isAuthenticated);
     const handleSubmit = (e) => {
         e.preventDefault();
         

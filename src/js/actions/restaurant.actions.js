@@ -25,7 +25,6 @@ export const restaurantError = (error) => {
 };
 
 export const getRestaurant = (restaurantId) => async dispatch => {
-    console.log("GET RESTAURANT...");
     dispatch(requestRestaurant());
     myFirebase.firestore().collection('restaurants').doc(restaurantId).get().then((restaurantSnapshot)=>{
         const restaurant = restaurantSnapshot.data();
@@ -58,9 +57,7 @@ export const editRestaurantFailed = (error) => {
 };
 
 export const editRestaurantRequest = (restaurantId, restaurantBody) => {
-  console.log("editando")
   return  dispatch => {
-    console.log("edit")
     const {name, foods, address, paymentMethods, timeToDelivery, deliveryPrice, img} = restaurantBody;
       dispatch(editRestaurantRequestStarted());
       myFirebase.firestore().collection('restaurants').doc(restaurantId).get().then((restaurantSnapshot)=>{
@@ -113,18 +110,12 @@ export const uploadRestaurantImg = (imageURL, restaurant) => {
       contentType: 'image/jpeg',
       };
       dispatch(uploadRestaurantImgRequest());
-      console.log("via comecar");
       const uploadTask = storage.ref(`restaurantLogos/${restaurant.uid}.jpeg`).put(blob,metadata);  
       uploadTask.on('state_changed', 
       (snapshot)=>{
-        console.log("ta indo");
-
       }, (error)=>{
-        console.log("Deu merda");
-
         dispatch(uploadRestaurantImgFailure(error))
       }, ()=>{
-        console.log("deu certo")
         storage.ref(`restaurantLogos`).child(`${restaurant.uid}.jpeg`).getDownloadURL().then(imgUrl=>{
           dispatch(editRestaurantRequest(restaurant.uid, {...restaurant, img:imgUrl}))
           dispatch(uploadRestaurantImgSuccess());

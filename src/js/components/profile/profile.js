@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import { Button} from '@material-ui/core';
 import { connect } from "react-redux";
-import { CardMedia, CircularProgress, Dialog, DialogTitle } from '@material-ui/core';
+import { CardMedia, CircularProgress, Dialog, DialogTitle, DialogActions } from '@material-ui/core';
 import { makeStyles} from '@material-ui/core/styles';
 import StoreForm from './StoreForm';
 import AddressForm from "./AddressForm";
@@ -79,6 +79,10 @@ const Profile = (props) => {
   const [deliveryPrice, setDeliveryPrice] = useState(0);
 
   const [imgDialogOpen, setImgDialogOpen] =useState(false);
+  const [cancelDialogOpen, setCancelDialogOpen] = useState(false);
+
+  const [isChanged, setIsChanged] = useState(false);
+  const [isCanceled, setIsCanceled] = useState(false);
 
   useEffect(() => {    
     if(Object.entries(restaurant).length !== 0 && restaurant.constructor === Object){
@@ -99,10 +103,11 @@ const Profile = (props) => {
       setDeliveryPrice(deliveryPrice);
       setPaymentMethods(paymentMethods);
     }
-  },[restaurant, img]);
+  },[restaurant, img, isCanceled]);
 
   const handleSubmit = (e) => {
     e.preventDefault();
+    setIsChanged(false);
     handleEditRestaurant();
   }
 
@@ -139,6 +144,19 @@ const Profile = (props) => {
     setImgDialogOpen(true);
   };
 
+  const handleCancelDialogOpen = () =>{
+    setCancelDialogOpen(true);
+  }
+  const handleCancelDialogClose = () =>{
+    setCancelDialogOpen(false);
+  }
+
+  const handleCancel = () =>{
+    setIsCanceled(!isCanceled);
+    setCancelDialogOpen(false);
+    setIsChanged(false);
+  }
+
 
   return(
     <div>
@@ -164,29 +182,70 @@ const Profile = (props) => {
           </div>
           <StoreForm 
             name={name} 
-            setName={setName} 
+            setName={(name)=>{
+              setIsChanged(true);
+              setName(name);
+              }
+            }
             foods={foods} 
-            setFoods={setFoods}
+            setFoods={(foods)=>{
+              setIsChanged(true);
+  
+  
+              setFoods(foods);
+            }}
             />
           <AddressForm 
             street={street} 
-            setStreet={setStreet} 
+            setStreet={(street)=>{
+              setIsChanged(true);
+              setStreet(street);
+              }
+            }
             complement={complement} 
-            setComplement={setComplement}
+            setComplement={(complement)=>{
+              setIsChanged(true);
+              setComplement(complement);
+              }
+            }
             CEP={CEP}
-            setCEP={setCEP}
+            setCEP={(CEP)=>{
+              setIsChanged(true);
+              setCEP(CEP);
+              }
+            }
             city={city}
-            setCity={setCity}
+            setCity={(city)=>{
+              setIsChanged(true);
+              setCity(city);
+              }
+            }
             state={state}
-            setState={setState}
+            setState={(state)=>{
+              setIsChanged(true);
+              setState(state);
+              }
+            }
             />    
           <DeliveryForm 
             timeToDelivery={timeToDelivery}
-            setTimeToDelivery={setTimeToDelivery}
+            setTimeToDelivery={(timeToDelivery)=>{
+              setIsChanged(true);
+              setTimeToDelivery(timeToDelivery);
+              }
+            }
             deliveryPrice={deliveryPrice}
-            setDeliveryPrice={setDeliveryPrice}
+            setDeliveryPrice={(deliveryPrice)=>{
+              setIsChanged(true);
+              setDeliveryPrice(deliveryPrice);
+              }
+            }
             paymentMethods={paymentMethods}
-            setPaymentMethods={setPaymentMethods}
+            setPaymentMethods={(paymentMethods)=>{
+              setIsChanged(true);
+              setPaymentMethods(paymentMethods);
+              }
+            }
             />    
               <Dialog
           open={imgDialogOpen}
@@ -197,9 +256,25 @@ const Profile = (props) => {
         <DialogTitle id="img-dialog-title" color="primary">Selecione uma imagem para seu estabelecimento</DialogTitle>
           <ImageUploadDialogContent  handleImgDialogClose={handleImgDialogClose} handleImgUpload={handleImgUpload}/>
       </Dialog>
+      <Dialog
+          open={cancelDialogOpen}
+          onClose={handleCancelDialogClose}
+          aria-labelledby="img-dialog-title"
+          aria-describedby="img-dialog-description"
+        >
+        <DialogTitle id="img-dialog-title" color="primary">Tem certeza que deseja cancelar as alterações?</DialogTitle>
+        <DialogActions>
+          <Button onClick={handleImgDialogClose} color="primary">
+            Não
+          </Button>
+          <Button onClick={handleCancel} color="primary" autoFocus>
+            Sim
+          </Button>
+        </DialogActions>
+      </Dialog>
           <div className={classes.buttons}>
             <Button variant="contained"  color="secondary" type="submit">Salvar</Button>
-            <Button className={classes.cancelButton} variant="contained" >cancelar</Button>
+            <Button disabled={!isChanged} onClick={handleCancelDialogOpen} className={classes.cancelButton} variant="contained" >cancelar</Button>
           </div>
         </form>
       </div>
