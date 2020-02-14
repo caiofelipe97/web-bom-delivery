@@ -31,11 +31,11 @@ const RestaurantStatus  = ({open}) => {
     return(  
   <div>
       { open &&
-          <Button className={classes.disabledButton, classes.openStyle}
+          <Button className={[classes.disabledButton, classes.openStyle].join(" ")}
             variant="outlined" disabled endIcon={<CheckCircleIcon/>}> Restaurante Aberto</Button>
       }
       { !open && 
-        <Button className={classes.disabledButton,classes.closeStyle}  variant="outlined" disabled endIcon={<CancelIcon/>}> Restaurante Fechado</Button>
+        <Button className={[classes.disabledButton,classes.closeStyle].join(" ")}  variant="outlined" disabled endIcon={<CancelIcon/>}> Restaurante Fechado</Button>
      }
   </div>
 )};

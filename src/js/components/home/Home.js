@@ -1,9 +1,11 @@
-import React from 'react';
+import React, {useState} from 'react';
 import { connect } from "react-redux";
 import { logoutUser } from "../../actions";
-import { makeStyles} from '@material-ui/core/styles';
-import {AppBar, Toolbar, Drawer, List, Typography, Divider, ListItem, ListItemText} from '@material-ui/core';
+import { makeStyles, useTheme} from '@material-ui/core/styles';
+import {AppBar, Toolbar, Drawer, List, Typography, Divider, ListItem, ListItemText, IconButton} from '@material-ui/core';
 import {  Route, Switch, NavLink} from 'react-router-dom';
+import Hidden from '@material-ui/core/Hidden';
+import MenuIcon from '@material-ui/icons/Menu';
 
 import RestaurantHeader from '../common/RestaurantHeader';
 import RestaurantStatus from '../common/RestaurantStatus';
@@ -23,8 +25,10 @@ const useStyles = makeStyles(theme => ({
     flexDirection: 'row'  
   },
   drawer: {
-    width: drawerWidth,
-    flexShrink: 0
+    [theme.breakpoints.up('sm')]: {
+      width: drawerWidth,
+      flexShrink: 0
+    }
   },
   drawerPaper: {
     width: drawerWidth,
@@ -54,24 +58,68 @@ const useStyles = makeStyles(theme => ({
   },
   activeStyle:{
     backgroundColor: '#e6e6e6'  
-
-  }
+  },
+  menuButton: {
+    marginRight: theme.spacing(2),
+    [theme.breakpoints.up('sm')]: {
+      display: 'none',
+    },
+  },
 }));
 
 
 const Home = (props) => {
   const classes = useStyles();
-  const { isLoggingOut, user, restaurant,location } = props;
+  const theme = useTheme();
+  const [mobileOpen, setMobileOpen] = useState(false);
+
+  const handleDrawerToggle = () => {
+    setMobileOpen(!mobileOpen);
+  };
+
+  const { user, restaurant,location } = props;
   const handleLogout = () => {
       const { dispatch } = props;
       dispatch(logoutUser());
     };
+
+    const drawer = (
+      <div>
+
+      <div className={classes.toolbar } />
+      <Divider />
+      <List >
+        {[ {route: '/' ,text:'Ínicio'}, {route: '/profile' ,text:'Perfil'}, {route: '/menu' ,text:'Cardápio'}].map((el, index) => (
+          <NavLink   to={el.route} key={index} className={classes.linkStyle} >
+            <ListItem button key={index} className={location.pathname === el.route ? classes.activeStyle : classes.inactiveStyle}>
+              <ListItemText primary={el.text} />
+            </ListItem>
+          </NavLink>
+        ))}
+      </List>
+      <Divider />
+      <List>
+        <ListItem onClick={handleLogout} button key={"Sair"}>
+          <ListItemText primary={"Sair"}/>
+        </ListItem>
+      </List>
+      </div>
+    )
 
   return(
     <div className={classes.root}>
     <AppBar position="fixed" className={classes.appBar}>
         <div className={classes.firstHeaderStyle}>
         <Toolbar>
+        <IconButton
+            color="inherit"
+            aria-label="open drawer"
+            edge="start"
+            onClick={handleDrawerToggle}
+            className={classes.menuButton}
+          >
+            <MenuIcon />
+          </IconButton>
             <Typography variant="h6" noWrap>
                 Bom delivery
             </Typography>
@@ -85,6 +133,7 @@ const Home = (props) => {
         </div>
         
   </AppBar>
+  <Hidden xsDown implementation="css">
   <Drawer
     className={classes.drawer}
     variant="permanent"
@@ -93,24 +142,26 @@ const Home = (props) => {
     }}
     anchor="left"
   >
-    <div className={classes.toolbar } />
-    <Divider />
-    <List >
-      {[ {route: '/' ,text:'Ínicio'}, {route: '/profile' ,text:'Perfil'}, {route: '/menu' ,text:'Cardápio'}].map((el, index) => (
-        <NavLink   to={el.route} key={index} className={classes.linkStyle} >
-          <ListItem button key={index} className={location.pathname === el.route ? classes.activeStyle : classes.inactiveStyle}>
-            <ListItemText primary={el.text} />
-          </ListItem>
-        </NavLink>
-      ))}
-    </List>
-    <Divider />
-    <List>
-      <ListItem onClick={handleLogout} button key={"Sair"}>
-        <ListItemText primary={"Sair"}/>
-      </ListItem>
-    </List>
+   {drawer}
   </Drawer>
+  </Hidden>
+  <Hidden smUp implementation="css">
+          <Drawer
+            variant="temporary"
+            anchor={theme.direction === 'rtl' ? 'right' : 'left'}
+            open={mobileOpen}
+            onClose={handleDrawerToggle}
+            classes={{
+              paper: classes.drawerPaper,
+            }}
+            ModalProps={{
+              keepMounted: true
+            }}
+          >
+            {drawer}
+          </Drawer>
+        </Hidden>
+
   <main className={classes.content}>
         <div className={classes.toolbar} /> 
         <Switch>

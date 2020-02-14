@@ -1,4 +1,4 @@
-import { DialogContent, CardMedia,Card, Typography, CardContent, CardActions, Button } from '@material-ui/core';
+import { DialogContent, CardMedia,Card, Typography, CardContent, Button } from '@material-ui/core';
 import React, { PureComponent } from 'react';
 import ReactCrop from 'react-image-crop';
 import 'react-image-crop/dist/ReactCrop.css';

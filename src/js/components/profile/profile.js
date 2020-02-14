@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect } from "react";
 import { Button} from '@material-ui/core';
 import { connect } from "react-redux";
 import { CardMedia, CircularProgress, Dialog, DialogTitle, DialogActions } from '@material-ui/core';
@@ -190,8 +190,6 @@ const Profile = (props) => {
             foods={foods} 
             setFoods={(foods)=>{
               setIsChanged(true);
-  
-  
               setFoods(foods);
             }}
             />
