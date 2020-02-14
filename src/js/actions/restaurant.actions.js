@@ -1,4 +1,4 @@
-import { myFirebase } from "../firebase/firebase";
+import { myFirebase, storage } from "../firebase/firebase";
 
 
 export const GET_RESTAURANT_REQUEST = "GET_RESTAURANT_REQUEST";
@@ -43,7 +43,7 @@ export const editRestaurantRequestStarted = () => {
 };
 
 export const EDIT_RESTAURANT_SUCCESS = "EDIT_RESTAURANT_SUCCESS";
-export const editRestaurantSuccess = restaurant => {
+export const editRestaurantSuccess = () => {
     return {
       type: EDIT_RESTAURANT_SUCCESS
     };
@@ -58,8 +58,10 @@ export const editRestaurantFailed = (error) => {
 };
 
 export const editRestaurantRequest = (restaurantId, restaurantBody) => {
+  console.log("editando")
   return  dispatch => {
-    const {name, foods, address, paymentMethods, timeToDelivery, deliveryPrice} = restaurantBody;
+    console.log("edit")
+    const {name, foods, address, paymentMethods, timeToDelivery, deliveryPrice, img} = restaurantBody;
       dispatch(editRestaurantRequestStarted());
       myFirebase.firestore().collection('restaurants').doc(restaurantId).get().then((restaurantSnapshot)=>{
         myFirebase.firestore().collection("restaurants").doc(restaurantSnapshot.id).update({
@@ -68,7 +70,8 @@ export const editRestaurantRequest = (restaurantId, restaurantBody) => {
           address: address,
           paymentMethods: paymentMethods,
           timeToDelivery: timeToDelivery,
-          deliveryPrice:deliveryPrice
+          deliveryPrice:deliveryPrice,
+          img: img
         }).then(()=>{
           dispatch(editRestaurantSuccess())
           dispatch(getRestaurant(restaurantSnapshot.id))
@@ -78,5 +81,65 @@ export const editRestaurantRequest = (restaurantId, restaurantBody) => {
     });
      
     }
+};
 
+export const UPLOAD_RESTAURANT_IMG_REQUEST = "UPLOAD_RESTAURANT_IMG_REQUEST";
+export const uploadRestaurantImgRequest = () => {
+    return {
+      type: UPLOAD_RESTAURANT_IMG_REQUEST
+    };
+};
+
+export const UPLOAD_RESTAURANT_IMG_SUCCESS = "UPLOAD_RESTAURANT_IMG_SUCCESS";
+export const uploadRestaurantImgSuccess = () => {
+    return {
+      type: UPLOAD_RESTAURANT_IMG_SUCCESS
+    };
+};
+
+export const UPLOAD_RESTAURANT_IMG_FAILURE = "UPLOAD_RESTAURANT_IMG_FAILURE";
+export const uploadRestaurantImgFailure = (error) => {
+    return {
+      type: UPLOAD_RESTAURANT_IMG_FAILURE,
+      error
+    };
+};
+
+
+export const uploadRestaurantImg = (imageURL, restaurant) => {
+  return dispatch => {
+    getFileBlob(imageURL, blob => {
+      const metadata = {
+      contentType: 'image/jpeg',
+      };
+      dispatch(uploadRestaurantImgRequest());
+      console.log("via comecar");
+      const uploadTask = storage.ref(`restaurantLogos/${restaurant.uid}.jpeg`).put(blob,metadata);  
+      uploadTask.on('state_changed', 
+      (snapshot)=>{
+        console.log("ta indo");
+
+      }, (error)=>{
+        console.log("Deu merda");
+
+        dispatch(uploadRestaurantImgFailure(error))
+      }, ()=>{
+        console.log("deu certo")
+        storage.ref(`restaurantLogos`).child(`${restaurant.uid}.jpeg`).getDownloadURL().then(imgUrl=>{
+          dispatch(editRestaurantRequest(restaurant.uid, {...restaurant, img:imgUrl}))
+          dispatch(uploadRestaurantImgSuccess());
+        })
+      }) 
+    })
+  }
+}
+
+const getFileBlob = function (url, cb) {
+  var xhr = new XMLHttpRequest();
+  xhr.open("GET", url);
+  xhr.responseType = "blob";
+  xhr.addEventListener('load', function() {
+    cb(xhr.response);
+  });
+  xhr.send();
 };

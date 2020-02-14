@@ -62,8 +62,6 @@ const useStyles = makeStyles(theme => ({
 const Home = (props) => {
   const classes = useStyles();
   const { isLoggingOut, user, restaurant,location } = props;
-  console.log(location.pathname)
-  console.log(restaurant)
   const handleLogout = () => {
       const { dispatch } = props;
       dispatch(logoutUser());

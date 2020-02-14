@@ -1,12 +1,14 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { Button} from '@material-ui/core';
 import { connect } from "react-redux";
-import { CardMedia, CircularProgress } from '@material-ui/core';
+import { CardMedia, CircularProgress, Dialog, DialogTitle } from '@material-ui/core';
 import { makeStyles} from '@material-ui/core/styles';
 import StoreForm from './StoreForm';
 import AddressForm from "./AddressForm";
 import DeliveryForm from "./DeliveryForm";
-import {editRestaurantRequest} from "../../actions/restaurant.actions";
+import {editRestaurantRequest, uploadRestaurantImg} from "../../actions/restaurant.actions";
+import ImageUploadDialogContent from "./ImageUploadDialogContent";
+
 
 const useStyles = makeStyles(() => ({
   formFlexbox:{
@@ -55,10 +57,14 @@ const useStyles = makeStyles(() => ({
   }
 }))
 
+
 const Profile = (props) => {
   const classes = useStyles();
 
-  const { restaurant, editRestaurant, loading } = props;
+  const { restaurant, editRestaurant, loading, uploadImg } = props;
+
+  const [img, setImg] = useState("");
+
   const  [name, setName] = useState("");
   const [foods, setFoods] = React.useState([]);
 
@@ -72,11 +78,14 @@ const Profile = (props) => {
   const [timeToDelivery, setTimeToDelivery] = useState({min:0, max:0});
   const [deliveryPrice, setDeliveryPrice] = useState(0);
 
-  useEffect(() => {
+  const [imgDialogOpen, setImgDialogOpen] =useState(false);
+
+  useEffect(() => {    
     if(Object.entries(restaurant).length !== 0 && restaurant.constructor === Object){
-      const {name, foods, timeToDelivery, deliveryPrice, paymentMethods} = restaurant;
+      const {name, foods, timeToDelivery, deliveryPrice, paymentMethods, img} = restaurant;
+      setImg(img);
       setName(name);
-      setFoods(foods)
+      setFoods(foods);
       if(Object.entries(restaurant.address).length !== 0){
         const {street, complement, CEP, city, state} = restaurant.address;
         setStreet(street);
@@ -85,14 +94,19 @@ const Profile = (props) => {
         setCity(city);
         setState(state);
       }
+      
       setTimeToDelivery(timeToDelivery);
       setDeliveryPrice(deliveryPrice);
       setPaymentMethods(paymentMethods);
     }
-  },[restaurant]);
+  },[restaurant, img]);
 
   const handleSubmit = (e) => {
     e.preventDefault();
+    handleEditRestaurant();
+  }
+
+  const handleEditRestaurant = ()=>{
     const restaurantBody = {
       name: name,
       foods: foods,
@@ -105,11 +119,26 @@ const Profile = (props) => {
       },
       paymentMethods: paymentMethods,
       timeToDelivery: timeToDelivery,
-      deliveryPrice: parseInt(deliveryPrice,10)
+      deliveryPrice: parseInt(deliveryPrice,10),
+      img: img
     };
     const restaurantId = restaurant.uid;
     editRestaurant(restaurantId, restaurantBody);
   }
+
+  const handleImgUpload = imageToUpload => {
+    uploadImg(imageToUpload, restaurant)
+    handleImgDialogClose();
+  }
+
+  const handleImgDialogClose  = () => {
+    setImgDialogOpen(false);
+  };
+
+  const handleImgDialogOpen = () => {
+    setImgDialogOpen(true);
+  };
+
 
   return(
     <div>
@@ -122,18 +151,15 @@ const Profile = (props) => {
         <form  onSubmit={handleSubmit} className={classes.formFlexbox}>
           <div className={classes.imgDivStyle}>
             {
-              restaurant.img && <CardMedia component="img" src={restaurant.img} className={classes.imgStyle}/>
+              img && <CardMedia component="img" src={img} className={classes.imgStyle}/>
             }
             <Button
               variant="contained"
               component="label"
               color="primary"
+              onClick={handleImgDialogOpen}
               >
               Trocar Imagem
-              <input
-                  type="file"
-                  style={{ display: "none" }}
-              />
             </Button>
           </div>
           <StoreForm 
@@ -162,6 +188,15 @@ const Profile = (props) => {
             paymentMethods={paymentMethods}
             setPaymentMethods={setPaymentMethods}
             />    
+              <Dialog
+          open={imgDialogOpen}
+          onClose={handleImgDialogClose}
+          aria-labelledby="img-dialog-title"
+          aria-describedby="img-dialog-description"
+        >
+        <DialogTitle id="img-dialog-title" color="primary">Selecione uma imagem para seu estabelecimento</DialogTitle>
+          <ImageUploadDialogContent  handleImgDialogClose={handleImgDialogClose} handleImgUpload={handleImgUpload}/>
+      </Dialog>
           <div className={classes.buttons}>
             <Button variant="contained"  color="secondary" type="submit">Salvar</Button>
             <Button className={classes.cancelButton} variant="contained" >cancelar</Button>
@@ -171,7 +206,8 @@ const Profile = (props) => {
   )
 }
 const mapDispatchToProps = dispatch => ({
-  editRestaurant: (restaurantId, restaurantBody) => dispatch(editRestaurantRequest(restaurantId, restaurantBody))
+  editRestaurant: (restaurantId, restaurantBody) => dispatch(editRestaurantRequest(restaurantId, restaurantBody)),
+  uploadImg: (imgToUpload, restaurantName) => dispatch(uploadRestaurantImg(imgToUpload, restaurantName))
 });
 
 function mapStateToProps(state) {
