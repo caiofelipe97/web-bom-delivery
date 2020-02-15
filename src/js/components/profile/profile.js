@@ -8,7 +8,7 @@ import AddressForm from "./AddressForm";
 import DeliveryForm from "./DeliveryForm";
 import {editRestaurantRequest, uploadRestaurantImg} from "../../actions/restaurant.actions";
 import ImageUploadDialogContent from "./ImageUploadDialogContent";
-
+import PageTitle from "../common/PageTitle";
 
 const useStyles = makeStyles(() => ({
   formFlexbox:{
@@ -165,7 +165,7 @@ const Profile = (props) => {
         <CircularProgress className={classes.circularProgress} size={100}/>
       </div>
       }
-      <h1>Perfil</h1>
+      <PageTitle title={"Perfil"}/>
         <form  onSubmit={handleSubmit} className={classes.formFlexbox}>
           <div className={classes.imgDivStyle}>
             {
@@ -240,7 +240,7 @@ const Profile = (props) => {
             }
             paymentMethods={paymentMethods}
             setPaymentMethods={(paymentMethods)=>{
-              setIsChanged(true);
+               setIsChanged(true);
               setPaymentMethods(paymentMethods);
               }
             }

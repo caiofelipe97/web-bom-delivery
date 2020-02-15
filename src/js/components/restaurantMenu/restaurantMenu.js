@@ -1,11 +1,12 @@
 import React from 'react';
+import PageTitle from "../common/PageTitle";
 
 
 
 const RestaurantMenu = () => {
     return(
-        <h1>Cardápio</h1>
-    )
+        <PageTitle title={"Cardápio"}/>
+        )
 }
 
 export default RestaurantMenu;

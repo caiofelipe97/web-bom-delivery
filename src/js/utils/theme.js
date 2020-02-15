@@ -22,7 +22,7 @@ export const themeOptions = {
         },
     },
     typography: {
-        fontFamily: 'Trebuchet MS',
+        fontFamily: 'Roboto',
         fontSize: 14,   
         fontStyle: 'normal',
         color: '#ffffff'

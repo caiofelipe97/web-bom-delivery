@@ -1,10 +1,11 @@
 import React from 'react';
+import PageTitle from "../common/PageTitle";
 
 
 
 const Dashboard = () => {
     return(
-        <h1>Início</h1>
+        <PageTitle title={"Início"}/>
     )
 }
 
