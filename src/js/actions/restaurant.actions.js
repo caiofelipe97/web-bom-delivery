@@ -134,3 +134,44 @@ const getFileBlob = function (url, cb) {
   });
   xhr.send();
 };
+
+export const ADD_CATEGORY_REQUEST = "ADD_CATEGORY_REQUEST";
+export const AddCategoryRequest = () => {
+    return {
+      type: ADD_CATEGORY_REQUEST
+    };
+};
+
+export const ADD_CATEGORY_SUCCESS = "ADD_CATEGORY_SUCCESS";
+export const AddCategorySuccess = () => {
+    return {
+      type: ADD_CATEGORY_SUCCESS
+    };
+};
+
+export const ADD_CATEGORY_FAILURE = "ADD_CATEGORY_FAILURE";
+export const AddCategoryFailure = (error) => {
+    return {
+      type: ADD_CATEGORY_FAILURE,
+      error
+    };
+};
+
+
+export const addCategory = (restaurantId, restaurant,categoryName) => {
+  return  dispatch => {
+    const { categories } = restaurant;
+      dispatch(editRestaurantRequestStarted());
+      myFirebase.firestore().collection('restaurants').doc(restaurantId).get().then((restaurantSnapshot)=>{
+        myFirebase.firestore().collection("restaurants").doc(restaurantSnapshot.id).update({
+          categories: [...categories, {category: categoryName}],
+        }).then(()=>{
+          dispatch(AddCategorySuccess())
+          dispatch(getRestaurant(restaurantSnapshot.id))
+      }).catch(error=>{
+          dispatch(AddCategoryFailure(error));
+      });
+    });
+     
+    }
+};

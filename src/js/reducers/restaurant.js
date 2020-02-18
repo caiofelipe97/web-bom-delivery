@@ -7,7 +7,10 @@ import {
     EDIT_RESTAURANT_FAILURE,
     UPLOAD_RESTAURANT_IMG_REQUEST,
     UPLOAD_RESTAURANT_IMG_SUCCESS,
-    UPLOAD_RESTAURANT_IMG_FAILURE
+    UPLOAD_RESTAURANT_IMG_FAILURE,
+    ADD_CATEGORY_REQUEST,
+    ADD_CATEGORY_SUCCESS,
+    ADD_CATEGORY_FAILURE
   } from "../actions/";
 
 
@@ -68,7 +71,22 @@ export default (
             ...state,
             loading:false,
             errorMessage: action.error
-          }
+          };
+          case ADD_CATEGORY_REQUEST:
+            return{
+              ...state,
+              loading: true
+            };
+          case ADD_CATEGORY_SUCCESS:
+            return{
+              ...state
+            };
+          case ADD_CATEGORY_FAILURE:
+              return{
+                ...state,
+                loading:false,
+                errorMessage: action.error
+              }
       default:
           return state;
       }

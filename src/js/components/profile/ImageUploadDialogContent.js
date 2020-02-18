@@ -190,7 +190,7 @@ class ImageUploadDialogContent extends PureComponent {
       </CardMedia>
     </Card>
     <div className={classes.buttons}>
-        <Button onClick={()=>handleImgUpload(croppedImageUrl)}variant="contained"  color="secondary" type="submit">Salvar</Button>
+        <Button onClick={()=>handleImgUpload(croppedImageUrl)} variant="contained"  color="secondary" type="submit">Salvar</Button>
         <Button onClick={handleImgDialogClose} className={classes.cancelButton} variant="contained" >cancelar</Button>
     </div>
     </div>

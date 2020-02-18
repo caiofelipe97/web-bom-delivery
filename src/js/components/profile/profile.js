@@ -78,7 +78,7 @@ const Profile = (props) => {
   const [timeToDelivery, setTimeToDelivery] = useState({min:0, max:0});
   const [deliveryPrice, setDeliveryPrice] = useState(0);
 
-  const [imgDialogOpen, setImgDialogOpen] =useState(false);
+  const [imgDialogOpen, setImgDialogOpen] = useState(false);
   const [cancelDialogOpen, setCancelDialogOpen] = useState(false);
 
   const [isChanged, setIsChanged] = useState(false);
@@ -289,4 +289,5 @@ function mapStateToProps(state) {
       loading: state.restaurant.loading
     };
 }
+
 export default  connect(mapStateToProps,mapDispatchToProps)(Profile);

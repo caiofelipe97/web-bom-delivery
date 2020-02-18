@@ -10,7 +10,7 @@ import MenuIcon from '@material-ui/icons/Menu';
 import RestaurantHeader from '../common/RestaurantHeader';
 import RestaurantStatus from '../common/RestaurantStatus';
 import Profile from '../profile/profile';
-import RestaurantMenu from '../restaurantMenu/restaurantMenu';
+import RestaurantMenu from '../restaurantMenu/RestaurantMenu';
 import Dashboard from '../dashboard/dashboard';
 
 const drawerWidth = 240;
