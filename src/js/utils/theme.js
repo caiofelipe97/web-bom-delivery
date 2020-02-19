@@ -19,7 +19,7 @@ export const themeOptions = {
         },
         error: {
             main: '#F24405',
-        },
+        }
     },
     typography: {
         fontFamily: 'Roboto',

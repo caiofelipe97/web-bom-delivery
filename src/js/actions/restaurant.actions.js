@@ -164,7 +164,7 @@ export const addCategory = (restaurantId, restaurant,categoryName) => {
       dispatch(editRestaurantRequestStarted());
       myFirebase.firestore().collection('restaurants').doc(restaurantId).get().then((restaurantSnapshot)=>{
         myFirebase.firestore().collection("restaurants").doc(restaurantSnapshot.id).update({
-          categories: [...categories, {category: categoryName}],
+          categories: [...categories, {name: categoryName, items:[]}],
         }).then(()=>{
           dispatch(AddCategorySuccess())
           dispatch(getRestaurant(restaurantSnapshot.id))

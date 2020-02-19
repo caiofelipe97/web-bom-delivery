@@ -5,6 +5,7 @@ import { Divider, Button, CircularProgress } from '@material-ui/core';
 import { makeStyles} from '@material-ui/core/styles';
 import AddIcon from '@material-ui/icons/Add';
 import CategoryDialog from './CategoryDialog';
+import CategoryTable from './CategoryTable';
 import { connect } from "react-redux";
 import {addCategory} from "../../actions/restaurant.actions";
 
@@ -72,8 +73,8 @@ const RestaurantMenu = (props) => {
               Adicionar Categoria
             </Button>
             </div>
-            <div>
-              {restaurant && restaurant.categories && restaurant.categories.map(el=>{return <h2>{el.category}</h2>})}
+            <div className={classes.tablesDiv}>
+              {restaurant && restaurant.categories && restaurant.categories.map(category=>{return <CategoryTable category={category}/>})}
             </div>
             <CategoryDialog 
               categoryDialogOpen={categoryDialogOpen} 

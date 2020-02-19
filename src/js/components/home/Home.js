@@ -14,7 +14,7 @@ import RestaurantMenu from '../restaurantMenu/RestaurantMenu';
 import Dashboard from '../dashboard/dashboard';
 
 const drawerWidth = 240;
-const useStyles = makeStyles(theme => ({
+const useStyles = makeStyles(theme =>{ console.log(theme); return({
   root: {
     display: 'flex',
   },
@@ -25,7 +25,7 @@ const useStyles = makeStyles(theme => ({
     flexDirection: 'row'  
   },
   drawer: {
-    [theme.breakpoints.up('sm')]: {
+    [theme.breakpoints.up('md')]: {
       width: drawerWidth,
       flexShrink: 0
     }
@@ -61,11 +61,11 @@ const useStyles = makeStyles(theme => ({
   },
   menuButton: {
     marginRight: theme.spacing(2),
-    [theme.breakpoints.up('sm')]: {
+    [theme.breakpoints.up('md')]: {
       display: 'none',
     },
-  },
-}));
+  }
+})});
 
 
 const Home = (props) => {
@@ -133,7 +133,7 @@ const Home = (props) => {
         </div>
         
   </AppBar>
-  <Hidden xsDown implementation="css">
+  <Hidden smDown implementation="css">
   <Drawer
     className={classes.drawer}
     variant="permanent"
@@ -145,7 +145,7 @@ const Home = (props) => {
    {drawer}
   </Drawer>
   </Hidden>
-  <Hidden smUp implementation="css">
+  <Hidden mdUp implementation="css">
           <Drawer
             variant="temporary"
             anchor={theme.direction === 'rtl' ? 'right' : 'left'}
