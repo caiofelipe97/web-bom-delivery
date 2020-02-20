@@ -1,13 +1,14 @@
 import React, {useState} from 'react';
 import PageTitle from "../common/PageTitle";
 import PageSubtitle from "../common/PageSubtitle";
-import { Divider, Button, CircularProgress } from '@material-ui/core';
+import { Divider, Button, CircularProgress, Dialog } from '@material-ui/core';
 import { makeStyles} from '@material-ui/core/styles';
 import AddIcon from '@material-ui/icons/Add';
 import CategoryDialog from './CategoryDialog';
 import CategoryTable from './CategoryTable';
 import { connect } from "react-redux";
 import {addOrEditCategory} from "../../actions/restaurant.actions";
+import ItemDialog from './ItemDialog';
 
 const useStyles = makeStyles( _ => ({
     dividerStyle: {
@@ -37,6 +38,7 @@ const RestaurantMenu = (props) => {
     const classes = useStyles();
     const { restaurant, addOrEditCategory, loading } = props;
     const [categoryDialogOpen, setCategoryDialogOpen] = useState(false);
+    const [itemDialogOpen, setItemDialogOpen] = useState(false);
     const [isCategoryEdit, setIsCategoryEdit] = useState(false);
     const [category, setCategory] = useState({name:"",items:[]});
     const [categoryIndex, setCategoryIndex] = useState(-1);
@@ -46,7 +48,15 @@ const RestaurantMenu = (props) => {
         setCategory({name:"",items:[]})
         setCategoryIndex(-1);
       };
-    
+
+    const handleItemDialogClose = () => {
+      setItemDialogOpen(false);
+    }
+
+    const handleItemDialogOpen = () => {
+      setItemDialogOpen(true);
+    }
+     
       const handleCategoryDialogOpen = () => {
         setIsCategoryEdit(false);
         setCategoryDialogOpen(true);
@@ -60,7 +70,6 @@ const RestaurantMenu = (props) => {
       }
 
       const handleCategorySave = (category) => {
-        console.log("vai salvar");
         addOrEditCategory(restaurant.uid, restaurant, category, categoryIndex);
         handleCategoryDialogClose();
       }
@@ -88,7 +97,7 @@ const RestaurantMenu = (props) => {
             </Button>
             </div>
             <div className={classes.tablesDiv}>
-              {restaurant && restaurant.categories && restaurant.categories.map((category,i) =>{return <CategoryTable handleCategoryEdit={handleCategoryDialogEditOpen} key={i} category={category} index={i}/>})}
+              {restaurant && restaurant.categories && restaurant.categories.map((category,i) =>{return <CategoryTable handleItemDialogOpen={handleItemDialogOpen} handleCategoryEdit={handleCategoryDialogEditOpen} key={i} category={category} index={i}/>})}
             </div>
             <CategoryDialog 
               isEdit={isCategoryEdit}
@@ -99,6 +108,14 @@ const RestaurantMenu = (props) => {
               category={category}
               setCategory={setCategory}
               />
+              <Dialog open={itemDialogOpen}
+          onClose={handleItemDialogClose}>
+             <ItemDialog
+                itemDialogOpen={itemDialogOpen}
+                handleItemDialogClose={handleItemDialogClose}
+                />
+              </Dialog>
+            
         </div>
         )
 }

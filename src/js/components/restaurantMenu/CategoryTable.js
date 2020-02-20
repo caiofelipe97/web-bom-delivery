@@ -32,6 +32,13 @@ const useStyles = makeStyles(theme => {    console.log(theme)
     secondTableCell:{
         width: '22%'
     },
+    editHeader:{
+        display:'flex',
+        minWidth:100,
+        maxWidth: 200,
+        justifyContent: 'flex-end',
+
+    },
     editDiv:{
         display:'flex',
         justifyContent: 'space-between',
@@ -46,7 +53,7 @@ const useStyles = makeStyles(theme => {    console.log(theme)
 
 const CategoryTable = (props) => {
     const classes = useStyles();
-    const {category, handleCategoryEdit, index} = props;
+    const {category, handleCategoryEdit, index, handleItemDialogOpen} = props;
     const {items} = category;
     return(
         <TableContainer className={classes.tableContainer} component={Paper}>
@@ -59,7 +66,7 @@ const CategoryTable = (props) => {
             </TableCell>
             <TableCell className={classes.tableCellStyle}  align="right">
             <div>
-                <Link className={classes.linkStyle} onClick={()=>{handleCategoryEdit(category, index)}} color="primary" underline="always">Editar</Link>
+                <Link className={[classes.linkStyle, classes.editHeader].join(" ")} onClick={()=>{handleCategoryEdit(category, index)}} color="primary" underline="always">Editar</Link>
             </div>
             </TableCell>
           </TableRow>
@@ -70,7 +77,7 @@ const CategoryTable = (props) => {
                     <TableCell className={classes.firstTableCell}>
                     <div className={classes.itemInfoStyle}>
                     <Typography className={classes.textStyle}>{item.name}</Typography>
-                    <Typography className={classes.textStyle}>{formatMoney(item.value)}</Typography>
+                    <Typography className={classes.textStyle}>{formatMoney(item.price)}</Typography>
                     </div>
                     </TableCell>
                     <TableCell><PauseSalesButton/></TableCell>
@@ -88,7 +95,7 @@ const CategoryTable = (props) => {
             <TableRow>
             <TableCell className={classes.firstTableCell}>
             <div>
-                <Link className={classes.linkStyle} onClick={()=>{console.log(`Adicionar item`)}} color="primary" underline="always">+ Adicionar item</Link>
+                <Link className={classes.linkStyle} onClick={()=>handleItemDialogOpen()} color="primary" underline="always">+ Adicionar item</Link>
             </div>
             </TableCell>
             </TableRow>
