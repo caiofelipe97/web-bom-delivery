@@ -174,11 +174,7 @@ export const addOrEditCategory = (restaurantId, restaurant,newCategory, category
           dispatch(AddOrEditCategoryFailure(error));
       });
       }else {
-        categories.forEach((_, index) => {
-          if(categoryIndex === index) {
-            categories[index] = newCategory;
-          }
-        });
+        categories[categoryIndex] = newCategory;
         myFirebase.firestore().collection("restaurants").doc(restaurantSnapshot.id).update({
           categories: categories,
         }).then(()=>{
