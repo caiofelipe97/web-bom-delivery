@@ -3,6 +3,7 @@ import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper
 import { makeStyles} from '@material-ui/core/styles';
 
 import PauseSalesButton from './PauseSalesButton';
+import {formatMoney} from '../../utils/utils';
 
 const useStyles = makeStyles(theme => {    console.log(theme)
     return({
@@ -65,12 +66,12 @@ const CategoryTable = (props) => {
           </TableRow>
         </TableHead>
         <TableBody>
-            {items.map(item=>(
-                <TableRow>
+            {items.map((item,i)=>(
+                <TableRow key={i}>
                     <TableCell className={classes.firstTableCell}>
                     <div className={classes.itemInfoStyle}>
                     <Typography className={classes.textStyle}>{item.name}</Typography>
-                    <Typography className={classes.textStyle}>R$ {item.value}</Typography>
+                    <Typography className={classes.textStyle}>{formatMoney(item.value)}</Typography>
                     </div>
                     </TableCell>
                     <TableCell><PauseSalesButton/></TableCell>

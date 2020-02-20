@@ -74,7 +74,7 @@ const RestaurantMenu = (props) => {
             </Button>
             </div>
             <div className={classes.tablesDiv}>
-              {restaurant && restaurant.categories && restaurant.categories.map(category=>{return <CategoryTable category={category}/>})}
+              {restaurant && restaurant.categories && restaurant.categories.map((category,i) =>{return <CategoryTable key={i} category={category}/>})}
             </div>
             <CategoryDialog 
               categoryDialogOpen={categoryDialogOpen} 
