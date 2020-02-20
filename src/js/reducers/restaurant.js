@@ -8,9 +8,9 @@ import {
     UPLOAD_RESTAURANT_IMG_REQUEST,
     UPLOAD_RESTAURANT_IMG_SUCCESS,
     UPLOAD_RESTAURANT_IMG_FAILURE,
-    ADD_CATEGORY_REQUEST,
-    ADD_CATEGORY_SUCCESS,
-    ADD_CATEGORY_FAILURE
+    ADD_OR_EDIT_CATEGORY_REQUEST,
+    ADD_OR_EDIT_CATEGORY_SUCCESS,
+    ADD_OR_EDIT_CATEGORY_FAILURE
   } from "../actions/";
 
 
@@ -67,27 +67,27 @@ export default (
           ...state
         };
       case UPLOAD_RESTAURANT_IMG_FAILURE:
-          return{
-            ...state,
-            loading:false,
-            errorMessage: action.error
-          };
-          case ADD_CATEGORY_REQUEST:
-            return{
-              ...state,
-              loading: true
-            };
-          case ADD_CATEGORY_SUCCESS:
-            return{
-              ...state
-            };
-          case ADD_CATEGORY_FAILURE:
-              return{
-                ...state,
-                loading:false,
-                errorMessage: action.error
-              }
-      default:
+        return{
+          ...state,
+          loading:false,
+          errorMessage: action.error
+        };
+      case ADD_OR_EDIT_CATEGORY_REQUEST:
+        return{
+          ...state,
+          loading: true
+        };
+      case ADD_OR_EDIT_CATEGORY_SUCCESS:
+        return{
+          ...state
+        };
+      case ADD_OR_EDIT_CATEGORY_FAILURE:
+        return{
+          ...state,
+          loading:false,
+          errorMessage: action.error
+        }
+    default:
           return state;
       }
     };

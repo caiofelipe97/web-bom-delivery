@@ -7,7 +7,7 @@ import AddIcon from '@material-ui/icons/Add';
 import CategoryDialog from './CategoryDialog';
 import CategoryTable from './CategoryTable';
 import { connect } from "react-redux";
-import {addCategory} from "../../actions/restaurant.actions";
+import {addOrEditCategory} from "../../actions/restaurant.actions";
 
 const useStyles = makeStyles( _ => ({
     dividerStyle: {
@@ -35,19 +35,33 @@ const useStyles = makeStyles( _ => ({
 
 const RestaurantMenu = (props) => {
     const classes = useStyles();
-    const { restaurant, addCategory, loading } = props;
+    const { restaurant, addOrEditCategory, loading } = props;
     const [categoryDialogOpen, setCategoryDialogOpen] = useState(false);
+    const [isCategoryEdit, setIsCategoryEdit] = useState(false);
+    const [category, setCategory] = useState({name:"",items:[]});
+    const [categoryIndex, setCategoryIndex] = useState(-1);
 
     const handleCategoryDialogClose  = () => {
         setCategoryDialogOpen(false);
+        setCategory({name:"",items:[]})
+        setCategoryIndex(-1);
       };
     
       const handleCategoryDialogOpen = () => {
+        setIsCategoryEdit(false);
         setCategoryDialogOpen(true);
       };
 
+      const handleCategoryDialogEditOpen =(category, i)=>{
+        setCategory(category);
+        setCategoryIndex(i);
+        setIsCategoryEdit(true);
+        setCategoryDialogOpen(true);
+      }
+
       const handleCategorySave = (category) => {
-        addCategory(restaurant.uid, restaurant, category);
+        console.log("vai salvar");
+        addOrEditCategory(restaurant.uid, restaurant, category, categoryIndex);
         handleCategoryDialogClose();
       }
 
@@ -74,20 +88,23 @@ const RestaurantMenu = (props) => {
             </Button>
             </div>
             <div className={classes.tablesDiv}>
-              {restaurant && restaurant.categories && restaurant.categories.map((category,i) =>{return <CategoryTable key={i} category={category}/>})}
+              {restaurant && restaurant.categories && restaurant.categories.map((category,i) =>{return <CategoryTable handleCategoryEdit={handleCategoryDialogEditOpen} key={i} category={category} index={i}/>})}
             </div>
             <CategoryDialog 
+              isEdit={isCategoryEdit}
               categoryDialogOpen={categoryDialogOpen} 
               handleCategoryDialogClose={handleCategoryDialogClose}
               handleCategorySave={handleCategorySave}
               loading={loading}
+              category={category}
+              setCategory={setCategory}
               />
         </div>
         )
 }
 
 const mapDispatchToProps = dispatch => ({
-  addCategory: (restaurantId, restaurant,categoryName) => dispatch(addCategory(restaurantId, restaurant, categoryName)),
+  addOrEditCategory: (restaurantId, restaurant,categoryName, categoryIndex) => dispatch(addOrEditCategory(restaurantId, restaurant, categoryName, categoryIndex)),
 });
 
 function mapStateToProps(state) {

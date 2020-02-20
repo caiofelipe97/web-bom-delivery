@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import { DialogContent, Dialog,DialogTitle, DialogActions, Button, TextField } from '@material-ui/core';
 import { makeStyles} from '@material-ui/core/styles';
 
@@ -13,10 +13,10 @@ const useStyles = makeStyles( () => ({
 
 
 const CategoryDialog = (props) => {
-    const {categoryDialogOpen, handleCategoryDialogClose, handleCategorySave, loading} = props;
+    const {categoryDialogOpen, handleCategoryDialogClose, handleCategorySave, loading,isEdit, category, setCategory} = props;
     const classes = useStyles();
-    const [category, setCategory] = useState("");
 
+    
 
     return(
     <Dialog
@@ -25,7 +25,7 @@ const CategoryDialog = (props) => {
           aria-labelledby="category-dialog-title"
           aria-describedby="category-dialog-description"
         >
-        <DialogTitle id="category-dialog-title" color="primary">Criar categoria</DialogTitle>
+        {isEdit ? <DialogTitle id="category-dialog-title" color="primary">Editar categoria</DialogTitle>:<DialogTitle id="category-dialog-title" color="primary">Criar categoria</DialogTitle>}
         <DialogContent className={classes.DialogContentStyle}>
             <TextField
                 variant="outlined"
@@ -36,19 +36,17 @@ const CategoryDialog = (props) => {
                 label="Nome da categoria"
                 name="category"
                 autoFocus
-                value={category}
-                onChange={e => setCategory(e.target.value)}
+                value={category.name}
+                onChange={e => setCategory({...category, name:e.target.value})}
             />
             </DialogContent>
         <DialogActions>
             <Button disabled={loading} className={classes.ButtonStyle} onClick={()=>{
               handleCategorySave(category);
-              setCategory("");
               }}  variant="contained"  color="primary">
             Salvar
           </Button>
           <Button disabled={loading} className={classes.ButtonStyle}  onClick={()=>{
-              setCategory("");
               handleCategoryDialogClose();
               }} variant="outlined"  color="primary">
             Cancelar

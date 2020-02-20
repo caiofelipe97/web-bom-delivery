@@ -262,7 +262,7 @@ const Profile = (props) => {
         >
         <DialogTitle id="img-dialog-title" color="primary">Tem certeza que deseja cancelar as alterações?</DialogTitle>
         <DialogActions>
-          <Button onClick={handleImgDialogClose} color="primary">
+          <Button onClick={handleCancelDialogClose} color="primary">
             Não
           </Button>
           <Button onClick={handleCancel} color="primary" autoFocus>

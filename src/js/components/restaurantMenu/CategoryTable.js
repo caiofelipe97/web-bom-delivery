@@ -46,9 +46,8 @@ const useStyles = makeStyles(theme => {    console.log(theme)
 
 const CategoryTable = (props) => {
     const classes = useStyles();
-    const {category} = props;
+    const {category, handleCategoryEdit, index} = props;
     const {items} = category;
-    console.log(category)
     return(
         <TableContainer className={classes.tableContainer} component={Paper}>
               <Table className={classes.table} aria-label="category table">
@@ -60,13 +59,13 @@ const CategoryTable = (props) => {
             </TableCell>
             <TableCell className={classes.tableCellStyle}  align="right">
             <div>
-                <Link className={classes.linkStyle} onClick={()=>{console.log(`Editar ${category.name}`)}} color="primary" underline="always">Editar</Link>
+                <Link className={classes.linkStyle} onClick={()=>{handleCategoryEdit(category, index)}} color="primary" underline="always">Editar</Link>
             </div>
             </TableCell>
           </TableRow>
         </TableHead>
         <TableBody>
-            {items.map((item,i)=>(
+            {items && items.map((item,i)=>(
                 <TableRow key={i}>
                     <TableCell className={classes.firstTableCell}>
                     <div className={classes.itemInfoStyle}>
