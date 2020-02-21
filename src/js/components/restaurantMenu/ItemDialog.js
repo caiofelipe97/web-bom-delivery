@@ -12,10 +12,13 @@ import {
     Select,
     MenuItem,
     InputAdornment,
-    FormHelperText
+    FormHelperText,
+    Dialog
  } from '@material-ui/core';
 import { makeStyles} from '@material-ui/core/styles';
 import PauseSalesButton from './PauseSalesButton';
+import ItemImageDialogContent from './ItemImageDialogContent';
+import AddAPhotoIcon from '@material-ui/icons/AddAPhoto';
 
 const useStyles = makeStyles( (theme) => ({
     ButtonStyle: {
@@ -35,7 +38,10 @@ const useStyles = makeStyles( (theme) => ({
         height: 100,
         border: '2px dotted #999',
         borderColor: theme.palette.grey[400],
-        marginTop: 20
+        marginTop: 20,
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center'
     },
     formControl: {
         margin: theme.spacing(1),
@@ -69,19 +75,30 @@ const useStyles = makeStyles( (theme) => ({
     pauseDiv:{
       width: '70%',
       marginLeft: 10
+    },
+    imgCropped:{
+      width: 100,
+      height: 100
+    },
+    uploadIcon:{
+      width: 50,
+      height: 50,
+      color: 'rgba(0,0,0,0.64)'
     }
 }))
 
 
 const ItemDialog = (props) => {
-    const {itemDialogOpen, handleItemDialogClose} = props;
+    const {handleItemDialogClose, categories, categoryId} = props;
     const classes = useStyles();
 
     const [img, setImg] = useState("");
     const  [name, setName] = useState("");
-    const  [category, setCategory] = useState("");
+    const  [category, setCategory] = useState(0);
     const  [description, setDescription] = useState("");
     const [price, setPrice] = useState(0);
+    const [isPaused, setIsPaused] = useState(false);
+    const [imgDialogOpen, setImgDialogOpen] = useState(false);
 
 
     
@@ -90,20 +107,37 @@ const ItemDialog = (props) => {
     useEffect(() => {
         if(inputLabel.current){
             setLabelWidth(inputLabel.current.offsetWidth);
-
         }
-    }, []);
-  
+        setCategory(categoryId);
+    }, [categoryId]);
+    
+    const handleItemSave = (e) =>{
+      e.preventDefault();
+      
+      console.log({name,category,description,price, img, isPaused})
+    }
+
+    const handleSelectImage = (croppedImg) =>{
+      setImg(croppedImg);
+      setImgDialogOpen(false);
+    }
+
+    const handleImgDialogClose = ()=>{
+      setImgDialogOpen(false);
+    }
 
     return(
-        <div>
-        <DialogTitle id="category-dialog-title" color="primary">Criar item</DialogTitle>
+      <form  onSubmit={handleItemSave}>
+      <DialogTitle id="category-dialog-title" color="primary">Criar item</DialogTitle>
+
         <DialogContent className={classes.DialogContentStyle}>
         <div className={classes.mainDivStyle}>
             <div>
                 <div className={classes.pictureDiv}>
+                 {img && <img alt="crop" className={classes.imgCropped} src={img}/>}
+                 {!img && <AddAPhotoIcon className={classes.uploadIcon}/>}
                 </div>
-                <Link className={classes.linkStyle} onClick={()=>{console.log(`Escolher Foto`)}} color="primary" underline="always">Escolher Foto</Link>
+                <Link className={classes.linkStyle} onClick={()=>{setImgDialogOpen(true)}} color="primary" underline="always">Escolher Foto</Link>
             </div>
             <div className={classes.formsDiv}>
             <div className={classes.nameDiv}>
@@ -113,9 +147,9 @@ const ItemDialog = (props) => {
                         margin="normal"
                         required
                         fullWidth
-                        id="name"
+                        id="item-name"
                         label="Nome"
-                        name="name"
+                        name="item-name"
                         type="text"
                         value={name}
                         inputProps={{maxLength: 30}}
@@ -134,9 +168,13 @@ const ItemDialog = (props) => {
                   labelWidth={labelWidth}
                   required
                   >
-                    <MenuItem value={'Bebidas'}>Bebidas</MenuItem>
-                    <MenuItem value={'Pizzas'}>Pizzas</MenuItem>
-                    <MenuItem value={'Sanduiches'}>Sanduiches</MenuItem>
+                  {  
+                     categories && categories.map((category,i)=>{
+                      return <MenuItem key={i} value={category.id}>{category.name}</MenuItem>
+                    })
+                  }
+                  { category===0 && (<MenuItem key={0} value={0}></MenuItem>)}
+                    
                   </Select>
                 </FormControl>
             </div>
@@ -145,13 +183,12 @@ const ItemDialog = (props) => {
                     <TextField
                         variant="outlined"
                         margin="normal"
-                        required
                         fullWidth
                         multiline
                         rows={2}
-                        id="description"
+                        id="item-description"
                         label="Descrição"
-                        name="description"
+                        name="item-description"
                         type="text"
                         value={description}
                         inputProps={{maxLength: 30}}
@@ -166,12 +203,13 @@ const ItemDialog = (props) => {
                         margin="normal"
                         required
                         fullWidth
-                        id="price"
+                        id="item-price"
                         label="Preço"
                         InputProps={{
                           startAdornment: <InputAdornment position="start">R$ </InputAdornment>,
+                          inputProps: { min: 0.1, max: 999, step:0.1 }                       
                         }}
-                        name="price"
+                        name="item-price"
                         type="number"
                         value={price}
                         onChange={e => setPrice(e.target.value)}
@@ -188,7 +226,7 @@ const ItemDialog = (props) => {
         </div>
         </DialogContent>
         <DialogActions>
-            <Button className={classes.ButtonStyle} onClick={()=>{console.log("Salvando Item")}}  variant="contained"  color="primary">
+            <Button type="submit" className={classes.ButtonStyle}  variant="contained"  color="primary">
             Salvar
           </Button>
           <Button className={classes.ButtonStyle}  onClick={()=>{handleItemDialogClose()}} variant="outlined"  color="primary">
@@ -196,7 +234,17 @@ const ItemDialog = (props) => {
           </Button>
           
         </DialogActions>
-        </div>)
+        <Dialog
+          open={imgDialogOpen}
+          onClose={handleImgDialogClose}
+          aria-labelledby="img-dialog-title"
+          aria-describedby="img-dialog-description"
+        >
+        <DialogTitle id="img-dialog-title" color="primary">Selecione uma imagem para o item</DialogTitle>
+          <ItemImageDialogContent  handleImgDialogClose={handleImgDialogClose} handleSelectImage={handleSelectImage}/>
+      </Dialog>
+      </form>
+)
 }
 
 export default ItemDialog;

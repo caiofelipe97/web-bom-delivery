@@ -95,7 +95,7 @@ const CategoryTable = (props) => {
             <TableRow>
             <TableCell className={classes.firstTableCell}>
             <div>
-                <Link className={classes.linkStyle} onClick={()=>handleItemDialogOpen()} color="primary" underline="always">+ Adicionar item</Link>
+                <Link className={classes.linkStyle} onClick={()=>handleItemDialogOpen(category.id)} color="primary" underline="always">+ Adicionar item</Link>
             </div>
             </TableCell>
             </TableRow>

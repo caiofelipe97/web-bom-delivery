@@ -165,6 +165,7 @@ export const addOrEditCategory = (restaurantId, restaurant,newCategory, category
     myFirebase.firestore().collection('restaurants').doc(restaurantId).get().then((restaurantSnapshot)=>{
       //Its a new category
       if(categoryIndex <0){
+        newCategory = {...newCategory, id:new Date().getTime()}
         myFirebase.firestore().collection("restaurants").doc(restaurantSnapshot.id).update({
           categories: [...categories, newCategory],
         }).then(()=>{

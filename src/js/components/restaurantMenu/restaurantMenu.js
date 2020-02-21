@@ -7,7 +7,7 @@ import AddIcon from '@material-ui/icons/Add';
 import CategoryDialog from './CategoryDialog';
 import CategoryTable from './CategoryTable';
 import { connect } from "react-redux";
-import {addOrEditCategory} from "../../actions/restaurant.actions";
+import {addOrEditCategory, restaurantError} from "../../actions/restaurant.actions";
 import ItemDialog from './ItemDialog';
 
 const useStyles = makeStyles( _ => ({
@@ -40,20 +40,23 @@ const RestaurantMenu = (props) => {
     const [categoryDialogOpen, setCategoryDialogOpen] = useState(false);
     const [itemDialogOpen, setItemDialogOpen] = useState(false);
     const [isCategoryEdit, setIsCategoryEdit] = useState(false);
-    const [category, setCategory] = useState({name:"",items:[]});
+    const [category, setCategory] = useState({name:"",items:[], isPaused: false});
     const [categoryIndex, setCategoryIndex] = useState(-1);
+    const [categoryId, setCategoryId] = useState(0);
 
     const handleCategoryDialogClose  = () => {
         setCategoryDialogOpen(false);
-        setCategory({name:"",items:[]})
+        setCategory({name:"",items:[], isPaused: false})
         setCategoryIndex(-1);
       };
 
     const handleItemDialogClose = () => {
+      setCategoryId(0);
       setItemDialogOpen(false);
     }
 
-    const handleItemDialogOpen = () => {
+    const handleItemDialogOpen = (categoryId) => {
+      setCategoryId(categoryId);
       setItemDialogOpen(true);
     }
      
@@ -113,7 +116,9 @@ const RestaurantMenu = (props) => {
              <ItemDialog
                 itemDialogOpen={itemDialogOpen}
                 handleItemDialogClose={handleItemDialogClose}
-                />
+                categories={restaurant.categories}
+                categoryId={categoryId}
+              />
               </Dialog>
             
         </div>
