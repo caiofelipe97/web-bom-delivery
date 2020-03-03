@@ -6,3 +6,13 @@ export const formatMoney = (price)=>{
     formated = 'R$' + formated;
     return formated;
 }
+
+export const getFileBlob = function (url, cb) {
+    var xhr = new XMLHttpRequest();
+    xhr.open("GET", url);
+    xhr.responseType = "blob";
+    xhr.addEventListener('load', function() {
+      cb(xhr.response);
+    });
+    xhr.send();
+  };

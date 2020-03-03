@@ -1,5 +1,5 @@
 import { myFirebase, storage } from "../firebase/firebase";
-
+import {getFileBlob} from "../utils/utils";
 
 export const GET_RESTAURANT_REQUEST = "GET_RESTAURANT_REQUEST";
 export const requestRestaurant = () => {
@@ -125,16 +125,6 @@ export const uploadRestaurantImg = (imageURL, restaurant) => {
   }
 }
 
-const getFileBlob = function (url, cb) {
-  var xhr = new XMLHttpRequest();
-  xhr.open("GET", url);
-  xhr.responseType = "blob";
-  xhr.addEventListener('load', function() {
-    cb(xhr.response);
-  });
-  xhr.send();
-};
-
 export const ADD_OR_EDIT_CATEGORY_REQUEST = "ADD_OR_EDIT_CATEGORY_REQUEST";
 export const AddOrEditCategoryRequest = () => {
     return {
@@ -185,10 +175,101 @@ export const addOrEditCategory = (restaurantId, restaurant,newCategory, category
           dispatch(AddOrEditCategoryFailure(error));
       });
       }
-     
-      
-
     });
-    
     }
 };
+
+export const ADD_ITEM_REQUEST = "ADD_ITEM_REQUEST";
+export const AddItemRequestStarted = () => {
+    return {
+      type: ADD_ITEM_REQUEST
+    };
+};
+
+export const ADD_ITEM_SUCCESS = "ADD_ITEM_SUCCESS";
+export const AddItemSuccess = () => {
+    return {
+      type: ADD_ITEM_SUCCESS
+    };
+};
+
+export const ADD_ITEM_FAILURE = "ADD_ITEM_FAILURE";
+export const AddItemFailure = (error) => {
+    return {
+      type: ADD_ITEM_FAILURE,
+      error
+    };
+};
+
+export const UPLOAD_ITEM_IMG_REQUEST = "UPLOAD_ITEM_IMG_REQUEST";
+export const uploadItemImgRequestStarted = () => {
+    return {
+      type: UPLOAD_ITEM_IMG_REQUEST
+    };
+};
+
+export const UPLOAD_ITEM_IMG_SUCCESS = "UPLOAD_ITEM_IMG_SUCCESS";
+export const uploadItemImgSuccess = () => {
+    return {
+      type: ADD_ITEM_SUCCESS
+    };
+};
+
+export const UPLOAD_ITEM_IMG_FAILURE = "UPLOAD_ITEM_IMG_FAILURE";
+export const uploadItemImgFailure = (error) => {
+    return {
+      type: UPLOAD_ITEM_IMG_FAILURE,
+      error
+    };
+};
+
+
+export const addItemRequest = (item, restaurant) => {
+  let newItem = {...item,  id:new Date().getTime()};
+  return dispatch => {
+    const {img, id} = newItem;
+    if(img){
+      dispatch(uploadItemImgRequestStarted());
+      getFileBlob(img, blob => {
+        const metadata = {
+          contentType: 'image/jpeg',
+          };
+        
+        const uploadTask = storage.ref(`${restaurant.uid}/${id}.jpeg`).put(blob,metadata);  
+        uploadTask.on('state_changed', 
+        ()=>{
+        }, (error)=>{
+          dispatch(uploadItemImgFailure(error))
+          dispatch(createItem(newItem, restaurant))
+        }, ()=>{
+          storage.ref(`${restaurant.uid}`).child(`${id}.jpeg`).getDownloadURL().then(imgUrl=>{
+            dispatch(createItem({...newItem, img:imgUrl}, restaurant))
+            dispatch(uploadItemImgSuccess());
+          })
+      }
+    )})
+    } else {
+      dispatch(createItem(newItem, restaurant))
+      } 
+    }
+  
+}
+
+const createItem = (item,restaurant) =>{
+  return dispatch => {
+    dispatch(AddItemRequestStarted());
+    let {categories} = restaurant;
+    const categoryIndex = categories.findIndex(category => category.id === item.category);
+    categories[categoryIndex].items.push(item);
+    myFirebase.firestore().collection('restaurants').doc(restaurant.uid).get().then((restaurantSnapshot)=>{
+      myFirebase.firestore().collection("restaurants").doc(restaurantSnapshot.id).update({
+        categories: categories,
+      }).then(()=>{
+        dispatch(AddItemSuccess())
+        dispatch(getRestaurant(restaurantSnapshot.id))
+    }).catch(error=>{
+        dispatch(AddItemFailure(error));
+    });
+    });
+  }
+}

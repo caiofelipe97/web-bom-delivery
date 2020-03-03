@@ -1,5 +1,4 @@
 import React, {useState, useEffect, useRef} from 'react';
-import ReactDOM from "react-dom";
 import { 
     DialogContent, 
     DialogTitle, 
@@ -19,6 +18,8 @@ import { makeStyles} from '@material-ui/core/styles';
 import PauseSalesButton from './PauseSalesButton';
 import ItemImageDialogContent from './ItemImageDialogContent';
 import AddAPhotoIcon from '@material-ui/icons/AddAPhoto';
+import { connect } from "react-redux";
+import {addItemRequest} from "../../actions/restaurant.actions";
 
 const useStyles = makeStyles( (theme) => ({
     ButtonStyle: {
@@ -89,7 +90,7 @@ const useStyles = makeStyles( (theme) => ({
 
 
 const ItemDialog = (props) => {
-    const {handleItemDialogClose, categories, categoryId} = props;
+    const {handleItemDialogClose, categories, categoryId, addItem, restaurant} = props;
     const classes = useStyles();
 
     const [img, setImg] = useState("");
@@ -113,9 +114,9 @@ const ItemDialog = (props) => {
     
     const handleItemSave = (e) =>{
       e.preventDefault();
-      
-      console.log({name,category,description,price, img, isPaused})
-    }
+      addItem({name,category,description,price, img, isPaused}, restaurant);
+      handleItemDialogClose();
+     }
 
     const handleSelectImage = (croppedImg) =>{
       setImg(croppedImg);
@@ -247,4 +248,15 @@ const ItemDialog = (props) => {
 )
 }
 
-export default ItemDialog;
+const mapDispatchToProps = dispatch => ({
+  addItem: ( restaurant, item) => dispatch(addItemRequest( restaurant, item)),
+});
+
+function mapStateToProps(state) {
+    return {
+      restaurant: state.restaurant.restaurant,
+      loading: state.restaurant.loading
+    };
+}
+
+export default connect(mapStateToProps,mapDispatchToProps)(ItemDialog);
