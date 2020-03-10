@@ -223,12 +223,42 @@ export const uploadItemImgFailure = (error) => {
     };
 };
 
+export const EDIT_ITEM_REQUEST = "EDIT_ITEM_REQUEST";
+export const EditItemRequestStarted = () => {
+    return {
+      type: EDIT_ITEM_REQUEST
+    };
+};
+
+export const EDIT_ITEM_SUCCESS = "EDIT_ITEM_SUCCESS";
+export const EditItemSuccess = () => {
+    return {
+      type: EDIT_ITEM_SUCCESS
+    };
+};
+
+export const EDIT_ITEM_FAILURE = "EDIT_ITEM_FAILURE";
+export const EditItemFailure = (error) => {
+    return {
+      type: EDIT_ITEM_FAILURE,
+      error
+    };
+};
+
 
 export const addItemRequest = (item, restaurant) => {
-  let newItem = {...item,  id:new Date().getTime()};
+
   return dispatch => {
+    let newItem = {};
+    let isEdit = false;
+    if(item.id){
+      newItem = {...item};
+      isEdit = true;
+    } else{
+      newItem = {...item,  id:new Date().getTime()};
+    }
     const {img, id} = newItem;
-    if(img){
+    if(img && img.startsWith("blob")){
       dispatch(uploadItemImgRequestStarted());
       getFileBlob(img, blob => {
         const metadata = {
@@ -240,27 +270,64 @@ export const addItemRequest = (item, restaurant) => {
         ()=>{
         }, (error)=>{
           dispatch(uploadItemImgFailure(error))
-          dispatch(createItem(newItem, restaurant))
+          if(isEdit){
+            dispatch(editItem(newItem, restaurant));
+          }else{
+            dispatch(createItem(newItem, restaurant))
+          }
         }, ()=>{
           storage.ref(`${restaurant.uid}`).child(`${id}.jpeg`).getDownloadURL().then(imgUrl=>{
-            dispatch(createItem({...newItem, img:imgUrl}, restaurant))
             dispatch(uploadItemImgSuccess());
+            if(isEdit){
+              dispatch(editItem({...newItem, img:imgUrl}, restaurant));
+            }else{
+              dispatch(createItem({...newItem, img:imgUrl}, restaurant))
+            }
           })
       }
     )})
     } else {
-      dispatch(createItem(newItem, restaurant))
+      if(isEdit){
+        dispatch(editItem(newItem, restaurant));
+      }else{
+        dispatch(createItem(newItem, restaurant))
+      }
       } 
     }
   
 }
 
+const editItem = (editedItem, restaurant) =>{
+  return dispatch => {
+    dispatch(EditItemRequestStarted());
+
+    let {categories} = restaurant;
+    const categoryIndex = categories.findIndex(category => category.id === editedItem.category); 
+    const {items} = categories[categoryIndex];
+    const itemIndex = items.findIndex(item => item.id === editedItem.id);
+    categories[categoryIndex].items[itemIndex] = editedItem;
+
+    myFirebase.firestore().collection('restaurants').doc(restaurant.uid).get().then((restaurantSnapshot)=>{
+      myFirebase.firestore().collection("restaurants").doc(restaurantSnapshot.id).update({
+        categories: categories,
+      }).then(()=>{
+        dispatch(EditItemSuccess())
+        dispatch(getRestaurant(restaurantSnapshot.id))
+    }).catch(error=>{
+        dispatch(EditItemFailure(error));
+    });
+   });
+  }
+}
+
 const createItem = (item,restaurant) =>{
   return dispatch => {
     dispatch(AddItemRequestStarted());
+
     let {categories} = restaurant;
     const categoryIndex = categories.findIndex(category => category.id === item.category);
     categories[categoryIndex].items.push(item);
+    
     myFirebase.firestore().collection('restaurants').doc(restaurant.uid).get().then((restaurantSnapshot)=>{
       myFirebase.firestore().collection("restaurants").doc(restaurantSnapshot.id).update({
         categories: categories,

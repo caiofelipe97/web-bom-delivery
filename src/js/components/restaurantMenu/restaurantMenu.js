@@ -44,6 +44,9 @@ const RestaurantMenu = (props) => {
     const [categoryIndex, setCategoryIndex] = useState(-1);
     const [categoryId, setCategoryId] = useState(0);
 
+    const [isEdit, setIsEdit] = useState(false);
+    const [itemSelected, setItemSelected] = useState({name:"", description: "",id:0, img: "", isPaused:false, price:""})
+
     const handleCategoryDialogClose  = () => {
         setCategoryDialogOpen(false);
         setCategory({name:"",items:[], isPaused: false})
@@ -51,11 +54,12 @@ const RestaurantMenu = (props) => {
       };
 
     const handleItemDialogClose = () => {
-      setCategoryId(0);
       setItemDialogOpen(false);
     }
 
-    const handleItemDialogOpen = (categoryId) => {
+    const handleItemDialogOpen = (categoryId, isEdit, item) => {
+      setItemSelected(item);
+      setIsEdit(isEdit);
       setCategoryId(categoryId);
       setItemDialogOpen(true);
     }
@@ -118,6 +122,8 @@ const RestaurantMenu = (props) => {
                 handleItemDialogClose={handleItemDialogClose}
                 categories={restaurant.categories}
                 categoryId={categoryId}
+                isEdit={isEdit}
+                item = {itemSelected}
               />
               </Dialog>
             

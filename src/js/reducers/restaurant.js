@@ -16,7 +16,10 @@ import {
     ADD_ITEM_FAILURE,
     UPLOAD_ITEM_IMG_REQUEST,
     UPLOAD_ITEM_IMG_SUCCESS,
-    UPLOAD_ITEM_IMG_FAILURE
+    UPLOAD_ITEM_IMG_FAILURE,
+    EDIT_ITEM_REQUEST,
+    EDIT_ITEM_SUCCESS,
+    EDIT_ITEM_FAILURE
   } from "../actions/";
 
 
@@ -104,6 +107,21 @@ export default (
             ...state
           };
       case ADD_ITEM_FAILURE:
+        return{
+          ...state,
+          loading:false,
+          errorMessage: action.error
+        };
+        case EDIT_ITEM_REQUEST:
+          return{
+            ...state,
+            loading: true
+          };
+      case EDIT_ITEM_SUCCESS:
+          return{
+            ...state
+          };
+      case EDIT_ITEM_FAILURE:
         return{
           ...state,
           loading:false,

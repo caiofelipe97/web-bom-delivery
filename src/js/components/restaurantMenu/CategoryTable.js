@@ -85,7 +85,7 @@ const CategoryTable = (props) => {
                     <div className={classes.editDiv}>
                         <Link className={classes.linkStyle} onClick={()=>{console.log(`Duplicar ${item.name}`)}} color="primary" underline="always">Duplicar</Link>
 
-                        <Link className={classes.linkStyle} onClick={()=>{console.log(`Editar ${item.name}`)}} color="primary" underline="always">Editar</Link>
+                        <Link className={classes.linkStyle} onClick={()=>handleItemDialogOpen(category.id, true, item)}color="primary" underline="always">Editar</Link>
 
                     </div>
                     </TableCell>
@@ -95,7 +95,7 @@ const CategoryTable = (props) => {
             <TableRow>
             <TableCell className={classes.firstTableCell}>
             <div>
-                <Link className={classes.linkStyle} onClick={()=>handleItemDialogOpen(category.id)} color="primary" underline="always">+ Adicionar item</Link>
+                <Link className={classes.linkStyle} onClick={()=>handleItemDialogOpen(category.id, false)} color="primary" underline="always">+ Adicionar item</Link>
             </div>
             </TableCell>
             </TableRow>

@@ -90,7 +90,7 @@ const useStyles = makeStyles( (theme) => ({
 
 
 const ItemDialog = (props) => {
-    const {handleItemDialogClose, categories, categoryId, addItem, restaurant} = props;
+    const {handleItemDialogClose, categories, categoryId, addItem, restaurant, isEdit, item} = props;
     const classes = useStyles();
 
     const [img, setImg] = useState("");
@@ -99,7 +99,9 @@ const ItemDialog = (props) => {
     const  [description, setDescription] = useState("");
     const [price, setPrice] = useState(0);
     const [isPaused, setIsPaused] = useState(false);
+    const [id, setId] = useState(0);
     const [imgDialogOpen, setImgDialogOpen] = useState(false);
+  
 
 
     
@@ -110,11 +112,28 @@ const ItemDialog = (props) => {
             setLabelWidth(inputLabel.current.offsetWidth);
         }
         setCategory(categoryId);
-    }, [categoryId]);
+        if(isEdit){
+          const {img, name, category, description, price, isPaused, id} = item;
+          setImg(img);
+          setName(name);
+          setCategory(category);
+          setDescription(description);
+          setPrice(price);
+          setIsPaused(isPaused);
+          setId(id);
+        }
+    }, [categoryId,isEdit,item]);
     
     const handleItemSave = (e) =>{
       e.preventDefault();
-      addItem({name,category,description,price, img, isPaused}, restaurant);
+     
+      if(!isEdit){
+        const newItem = {name,category,description,price, img, isPaused};
+        addItem(newItem, restaurant);
+      }else{
+        const editedItem = {name, category, description, price, img, isPaused, id};
+        addItem(editedItem, restaurant);
+      }
       handleItemDialogClose();
      }
 
@@ -129,7 +148,7 @@ const ItemDialog = (props) => {
 
     return(
       <form  onSubmit={handleItemSave}>
-      <DialogTitle id="category-dialog-title" color="primary">Criar item</DialogTitle>
+      {isEdit ? <DialogTitle id="category-dialog-title" color="primary">Editar item</DialogTitle>:<DialogTitle id="category-dialog-title" color="primary">Criar item</DialogTitle>}
 
         <DialogContent className={classes.DialogContentStyle}>
         <div className={classes.mainDivStyle}>
