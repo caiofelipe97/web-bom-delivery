@@ -5,7 +5,7 @@ import { makeStyles} from '@material-ui/core/styles';
 import PauseSalesButton from './PauseSalesButton';
 import {formatMoney} from '../../utils/utils';
 
-const useStyles = makeStyles(theme => {    console.log(theme)
+const useStyles = makeStyles(theme => { 
     return({
     tableContainer:{
         marginTop: 20,
@@ -53,7 +53,7 @@ const useStyles = makeStyles(theme => {    console.log(theme)
 
 const CategoryTable = (props) => {
     const classes = useStyles();
-    const {category, handleCategoryEdit, index, handleItemDialogOpen} = props;
+    const {category, handleCategoryEdit, index, handleItemDialogOpen, handleDuplicateItem} = props;
     const {items} = category;
     return(
         <TableContainer className={classes.tableContainer} component={Paper}>
@@ -83,7 +83,7 @@ const CategoryTable = (props) => {
                     <TableCell><PauseSalesButton/></TableCell>
                     <TableCell>
                     <div className={classes.editDiv}>
-                        <Link className={classes.linkStyle} onClick={()=>{console.log(`Duplicar ${item.name}`)}} color="primary" underline="always">Duplicar</Link>
+                        <Link className={classes.linkStyle} onClick={()=>{handleDuplicateItem(item)}} color="primary" underline="always">Duplicar</Link>
 
                         <Link className={classes.linkStyle} onClick={()=>handleItemDialogOpen(category.id, true, item)}color="primary" underline="always">Editar</Link>
 

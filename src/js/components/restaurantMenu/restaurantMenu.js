@@ -7,7 +7,7 @@ import AddIcon from '@material-ui/icons/Add';
 import CategoryDialog from './CategoryDialog';
 import CategoryTable from './CategoryTable';
 import { connect } from "react-redux";
-import {addOrEditCategory, restaurantError} from "../../actions/restaurant.actions";
+import {addOrEditCategory, addItemRequest} from "../../actions/restaurant.actions";
 import ItemDialog from './ItemDialog';
 
 const useStyles = makeStyles( _ => ({
@@ -36,7 +36,7 @@ const useStyles = makeStyles( _ => ({
 
 const RestaurantMenu = (props) => {
     const classes = useStyles();
-    const { restaurant, addOrEditCategory, loading } = props;
+    const { restaurant, addOrEditCategory, loading, duplicateItem } = props;
     const [categoryDialogOpen, setCategoryDialogOpen] = useState(false);
     const [itemDialogOpen, setItemDialogOpen] = useState(false);
     const [isCategoryEdit, setIsCategoryEdit] = useState(false);
@@ -81,6 +81,13 @@ const RestaurantMenu = (props) => {
         handleCategoryDialogClose();
       }
 
+      const handleDuplicateItem = (item)=>{
+        console.log(item);
+        const duplicatedItem = {...item, id: 0};
+        duplicateItem(duplicatedItem, restaurant);
+
+      }
+
     return(
         <div>
         { loading &&
@@ -104,7 +111,7 @@ const RestaurantMenu = (props) => {
             </Button>
             </div>
             <div className={classes.tablesDiv}>
-              {restaurant && restaurant.categories && restaurant.categories.map((category,i) =>{return <CategoryTable handleItemDialogOpen={handleItemDialogOpen} handleCategoryEdit={handleCategoryDialogEditOpen} key={i} category={category} index={i}/>})}
+              {restaurant && restaurant.categories && restaurant.categories.map((category,i) =>{return <CategoryTable handleItemDialogOpen={handleItemDialogOpen} handleCategoryEdit={handleCategoryDialogEditOpen} key={i} category={category} index={i} handleDuplicateItem={handleDuplicateItem}/>})}
             </div>
             <CategoryDialog 
               isEdit={isCategoryEdit}
@@ -133,6 +140,7 @@ const RestaurantMenu = (props) => {
 
 const mapDispatchToProps = dispatch => ({
   addOrEditCategory: (restaurantId, restaurant,categoryName, categoryIndex) => dispatch(addOrEditCategory(restaurantId, restaurant, categoryName, categoryIndex)),
+  duplicateItem: ( item, restaurant) => dispatch(addItemRequest(item,restaurant)),
 });
 
 function mapStateToProps(state) {

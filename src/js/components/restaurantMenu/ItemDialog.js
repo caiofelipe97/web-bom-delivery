@@ -268,7 +268,7 @@ const ItemDialog = (props) => {
 }
 
 const mapDispatchToProps = dispatch => ({
-  addItem: ( restaurant, item) => dispatch(addItemRequest( restaurant, item)),
+  addItem: ( item, restaurant) => dispatch(addItemRequest( item, restaurant)),
 });
 
 function mapStateToProps(state) {

@@ -247,7 +247,6 @@ export const EditItemFailure = (error) => {
 
 
 export const addItemRequest = (item, restaurant) => {
-
   return dispatch => {
     let newItem = {};
     let isEdit = false;
@@ -258,7 +257,7 @@ export const addItemRequest = (item, restaurant) => {
       newItem = {...item,  id:new Date().getTime()};
     }
     const {img, id} = newItem;
-    if(img && img.startsWith("blob")){
+    if(img && (img.startsWith("blob") || !item.id)){
       dispatch(uploadItemImgRequestStarted());
       getFileBlob(img, blob => {
         const metadata = {
