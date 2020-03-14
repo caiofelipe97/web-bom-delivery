@@ -24,9 +24,9 @@ const useStyles = makeStyles( (theme) => ({
 
 const PauseSalesButton = (props) => {
     const classes = useStyles();
-
+    const {divStyle} = props;
     return(
-        <div className={classes.divStyle}>
+        <div className={ divStyle ? [classes.divStyle, divStyle].join(" ") : classes.divStyle}>
             <IconButton aria-label="pause" color="default" className={classes.buttonStyle}>
                 <PauseCircleOutlineIcon />
             </IconButton>

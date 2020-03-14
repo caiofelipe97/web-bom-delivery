@@ -12,7 +12,9 @@ import {
     MenuItem,
     InputAdornment,
     FormHelperText,
-    Dialog
+    Dialog,
+    Tab,
+    Tabs
  } from '@material-ui/core';
 import { makeStyles} from '@material-ui/core/styles';
 import PauseSalesButton from './PauseSalesButton';
@@ -20,13 +22,16 @@ import ItemImageDialogContent from './ItemImageDialogContent';
 import AddAPhotoIcon from '@material-ui/icons/AddAPhoto';
 import { connect } from "react-redux";
 import {addItemRequest} from "../../actions/restaurant.actions";
+import ItemComplementContent from './ItemComplementContent';
 
 const useStyles = makeStyles( (theme) => ({
     ButtonStyle: {
         width: '50%',
     },
     DialogContentStyle:{
-        minWidth: '500px'
+        minWidth: '600px',
+        minHeight: '350px'
+
     },
     linkStyle:{
         cursor:'pointer',
@@ -101,8 +106,8 @@ const ItemDialog = (props) => {
     const [isPaused, setIsPaused] = useState(false);
     const [id, setId] = useState(0);
     const [imgDialogOpen, setImgDialogOpen] = useState(false);
-  
-
+    const [tabSelected, setTabSelected] = useState(0);
+    const [complements, setComplements] = useState([]);
 
     
     const inputLabel = useRef(null);
@@ -113,13 +118,14 @@ const ItemDialog = (props) => {
         }
         setCategory(categoryId);
         if(isEdit){
-          const {img, name, category, description, price, isPaused, id} = item;
+          const {img, name, category, description, price, isPaused, complements, id} = item;
           setImg(img);
           setName(name);
           setCategory(category);
           setDescription(description);
           setPrice(price);
           setIsPaused(isPaused);
+          setComplements(complements);
           setId(id);
         }
     }, [categoryId,isEdit,item]);
@@ -128,10 +134,10 @@ const ItemDialog = (props) => {
       e.preventDefault();
      
       if(!isEdit){
-        const newItem = {name,category,description,price, img, isPaused};
+        const newItem = {name,category,description,price, img, isPaused, complements};
         addItem(newItem, restaurant);
       }else{
-        const editedItem = {name, category, description, price, img, isPaused, id};
+        const editedItem = {name, category, description, price, img, isPaused, complements, id};
         addItem(editedItem, restaurant);
       }
       handleItemDialogClose();
@@ -146,11 +152,28 @@ const ItemDialog = (props) => {
       setImgDialogOpen(false);
     }
 
+    const handleTabSelected = (e, newValue)=>{
+      setTabSelected(newValue);
+    }
+
     return(
       <form  onSubmit={handleItemSave}>
       {isEdit ? <DialogTitle id="category-dialog-title" color="primary">Editar item</DialogTitle>:<DialogTitle id="category-dialog-title" color="primary">Criar item</DialogTitle>}
 
-        <DialogContent className={classes.DialogContentStyle}>
+        <Tabs
+        value={tabSelected}
+          onChange={handleTabSelected}
+          variant="fullWidth"
+          indicatorColor="primary"
+          textColor="primary"
+          aria-label="scrollable force tabs example"
+        >
+          <Tab label="Detalhes"  />
+          <Tab label="Complementos" />
+        </Tabs>
+        {
+          tabSelected === 0 ?
+          <DialogContent className={classes.DialogContentStyle}>
         <div className={classes.mainDivStyle}>
             <div>
                 <div className={classes.pictureDiv}>
@@ -245,6 +268,10 @@ const ItemDialog = (props) => {
             </div>
         </div>
         </DialogContent>
+          :
+          <ItemComplementContent complements={complements}/>
+        }
+       
         <DialogActions>
             <Button type="submit" className={classes.ButtonStyle}  variant="contained"  color="primary">
             Salvar

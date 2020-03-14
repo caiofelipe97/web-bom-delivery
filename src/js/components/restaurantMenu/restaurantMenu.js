@@ -123,7 +123,11 @@ const RestaurantMenu = (props) => {
               setCategory={setCategory}
               />
               <Dialog open={itemDialogOpen}
-          onClose={handleItemDialogClose}>
+          onClose={handleItemDialogClose}
+          className={classes.itemDialogStyle}
+          fullWidth
+          maxWidth='md'
+          >
              <ItemDialog
                 itemDialogOpen={itemDialogOpen}
                 handleItemDialogClose={handleItemDialogClose}
