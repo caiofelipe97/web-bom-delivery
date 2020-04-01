@@ -45,7 +45,7 @@ const RestaurantMenu = (props) => {
     const [categoryId, setCategoryId] = useState(0);
 
     const [isEdit, setIsEdit] = useState(false);
-    const [itemSelected, setItemSelected] = useState({name:"", description: "",id:0, img: "", isPaused:false, price:""})
+    const [itemSelected, setItemSelected] = useState({name:"", description: "",id:0, img: "", isPaused:false, price:"", complements:[]})
 
     const handleCategoryDialogClose  = () => {
         setCategoryDialogOpen(false);
@@ -58,6 +58,7 @@ const RestaurantMenu = (props) => {
     }
 
     const handleItemDialogOpen = (categoryId, isEdit, item) => {
+      console.log(item)
       setItemSelected(item);
       setIsEdit(isEdit);
       setCategoryId(categoryId);
@@ -111,7 +112,19 @@ const RestaurantMenu = (props) => {
             </Button>
             </div>
             <div className={classes.tablesDiv}>
-              {restaurant && restaurant.categories && restaurant.categories.map((category,i) =>{return <CategoryTable handleItemDialogOpen={handleItemDialogOpen} handleCategoryEdit={handleCategoryDialogEditOpen} key={i} category={category} index={i} handleDuplicateItem={handleDuplicateItem}/>})}
+              {restaurant && 
+              restaurant.categories && 
+              restaurant.categories.map((category,i) =>
+              {
+                return <CategoryTable 
+                handleItemDialogOpen={handleItemDialogOpen} 
+                handleCategoryEdit={handleCategoryDialogEditOpen} 
+                key={i} 
+                category={category} 
+                index={i} 
+                handleDuplicateItem={handleDuplicateItem}
+                />
+              })}
             </div>
             <CategoryDialog 
               isEdit={isCategoryEdit}

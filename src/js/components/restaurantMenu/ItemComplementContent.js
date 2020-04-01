@@ -1,4 +1,4 @@
-import React from 'react';
+import React  from 'react';
 import { 
     DialogContent, 
     Link,
@@ -32,8 +32,10 @@ const useStyles = makeStyles( (theme) => ({
     helperTextDiv:{
         marginBottom: 10
     },
+    tableContainer:{
+        marginTop: 10
+    },
     table: {
-        marginTop:10,
         border: '1px solid rgba(0, 0, 0, 0.24)'
       },
       tableCellStyle:{
@@ -79,9 +81,11 @@ const useStyles = makeStyles( (theme) => ({
 
 
 const ItemComplementContent = (props) => {
-    const {complements} = props;
+    const {complements, handleComplementChange, handleOptionChange} = props;
     console.log(complements)
+
     const classes = useStyles();
+
     return(
         <DialogContent className={classes.DialogContentStyle}>
             <div className={classes.helperTextDiv} >
@@ -92,9 +96,9 @@ const ItemComplementContent = (props) => {
                 <Link className={classes.linkStyle}  color="primary" underline="always">+ Adicionar categoria</Link>
             </div>
             {
-                complements && complements.map((complement, i)=>{
+                complements && complements.map((complement, complementIndex)=>{
             return (
-            <TableContainer className={classes.tableContainer} component={Paper} key={i}>
+            <TableContainer className={classes.tableContainer} component={Paper} key={complementIndex}>
               <Table className={classes.table} aria-label="complement table">
               <TableHead>
               <TableRow>
@@ -110,7 +114,8 @@ const ItemComplementContent = (props) => {
                             fullWidth
                             id="complement-name"
                             label="Nome da categoria"
-                            name="complement-name"
+                            name="name"
+                            onChange={e => handleComplementChange(complementIndex,e.target.name,e.target.value)}
                         />
                         
                     <Link className={classes.linkStyle}  color="primary" underline="always">Excluir</Link>
@@ -130,6 +135,7 @@ const ItemComplementContent = (props) => {
                                 id="min"
                                 label="Qtd. mín."
                                 name="min"
+                                onChange={e => handleComplementChange(complementIndex,e.target.name,parseInt(e.target.value))}
                             />
                             <TextField
                                 className={classes.smallInput}
@@ -143,23 +149,28 @@ const ItemComplementContent = (props) => {
                                 id="max"
                                 label="Qtd. máx."
                                 name="max"
+                                onChange={e => handleComplementChange(complementIndex,e.target.name,parseInt(e.target.value))}
                             />                    
                         </div>
                         <FormControlLabel
                         className={classes.mediumInput}
                         control={
-                            <Checkbox checked={complement.isRequired} value="isRequired" />
+                            <Checkbox 
+                            checked={complement.isRequired} 
+                            inputProps={{name:'isRequired'}}  
+                            value={complement.isRequired} 
+                            onChange={e => handleComplementChange(complementIndex,e.target.name,e.target.checked)}/>
                             }
-                            label="Complemento obrigatório"
-                            />
+                        label="Complemento obrigatório"
+                        />
                     </div>
                     
                 </TableCell>
                 </TableRow>
         </TableHead>
         <TableBody>
-            {complement.options && complement.options.map((option,i)=>(
-                <TableRow key={i}>
+            {complement.options && complement.options.map((option,optionIndex)=>(
+                <TableRow key={optionIndex}>
                     <TableCell>
                         <div className={classes.bodyDiv}>
                         <TextField
@@ -173,6 +184,7 @@ const ItemComplementContent = (props) => {
                             id="option-name"
                             label="Complemento"
                             name="name"
+                            onChange={(e)=>{handleOptionChange(complementIndex, optionIndex,e.target.name, e.target.value)}}
                         />
                         <TextField
                             className={classes.bigBodyInput}
@@ -181,10 +193,10 @@ const ItemComplementContent = (props) => {
                             fullWidth
                             value = {option.description}
                             size="small"
-                            required
                             id="option-description"
                             label="Descrição"
-                            name="option-description"
+                            name="description"
+                            onChange={(e)=>{handleOptionChange(complementIndex, optionIndex,e.target.name, e.target.value)}}
                         />
 
                         <FormControl className={classes.smallBodyInput}>
@@ -200,9 +212,10 @@ const ItemComplementContent = (props) => {
                           startAdornment: <InputAdornment position="start">R$ </InputAdornment>,
                           inputProps: { min: 0.0, max: 999, step:0.1 }                       
                         }}
-                        name="option-price"
+                        name="price"
                         type="number"
                         value={option.price}
+                        onChange={(e)=>{handleOptionChange(complementIndex, optionIndex,e.target.name, parseFloat(e.target.value))}}
                     />
                 </FormControl>
                         <PauseSalesButton/>

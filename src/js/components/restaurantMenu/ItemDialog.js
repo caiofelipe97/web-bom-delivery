@@ -118,6 +118,8 @@ const ItemDialog = (props) => {
         }
         setCategory(categoryId);
         if(isEdit){
+          console.log("isEdit");
+          console.log(item)
           const {img, name, category, description, price, isPaused, complements, id} = item;
           setImg(img);
           setName(name);
@@ -154,6 +156,24 @@ const ItemDialog = (props) => {
 
     const handleTabSelected = (e, newValue)=>{
       setTabSelected(newValue);
+    }
+
+    const handleComplementCategoryChange = (index, attr, newValue)=>{
+      let newComplementsArray = complements.map((complement,i)=> i === index ? {...complement, [attr]:newValue } : complement);
+      setComplements(newComplementsArray);
+      
+    }
+
+    const handleComplementOptionChange = (categoryIndex, optionIndex, attr, newValue) =>{
+      if(complements[categoryIndex]){
+        if(complements[categoryIndex].options[optionIndex]){
+          let newComplementsArray = complements.map((complement,i)=>{ 
+            return i === categoryIndex ? 
+            { ...complement, options: complement.options.map((option, j) =>  j === optionIndex ? {...option, [attr]:newValue } : option) } 
+            : complement});
+          setComplements(newComplementsArray);
+        }
+      }
     }
 
     return(
@@ -269,7 +289,12 @@ const ItemDialog = (props) => {
         </div>
         </DialogContent>
           :
-          <ItemComplementContent complements={complements}/>
+          <ItemComplementContent 
+          handleComplementChange={handleComplementCategoryChange} 
+          handleOptionChange={handleComplementOptionChange} 
+          complements={complements}
+
+          />
         }
        
         <DialogActions>
