@@ -1,8 +1,7 @@
-import React  from 'react';
+import React, {useState}  from 'react';
 import { 
     DialogContent, 
     Link,
-    FormHelperText, 
     TableContainer, 
     Table, 
     TableBody, 
@@ -14,10 +13,11 @@ import {
     FormControlLabel,
     Checkbox,
     InputAdornment,
-    FormControl
+    FormControl,
 } from '@material-ui/core';
 import { makeStyles} from '@material-ui/core/styles';
 import PauseSalesButton from './PauseSalesButton';
+import ComplementDialog from './ComplementDialog';
 
 const useStyles = makeStyles( (theme) => ({
     DialogContentStyle:{
@@ -81,19 +81,23 @@ const useStyles = makeStyles( (theme) => ({
 
 
 const ItemComplementContent = (props) => {
-    const {complements, handleComplementChange, handleOptionChange} = props;
-    console.log(complements)
+    const {complements, handleComplementChange, handleOptionChange, setComplements} = props;
+    const [complementDialogOpen, setComplementDialogOpen] = useState(false);
 
     const classes = useStyles();
 
+    const handleComplementDialogClose = ()=>{
+        setComplementDialogOpen(false);
+    }
+
+    const handleAddComplement = (newComplement) =>{
+        setComplements([...complements,newComplement])
+        handleComplementDialogClose();
+    }
     return(
         <DialogContent className={classes.DialogContentStyle}>
-            <div className={classes.helperTextDiv} >
-                <FormHelperText> Alguns exemplos de categoria de complemento: selecionar sabor, selecionar extras.
-                Adicione alguma categoria de complemento para acrescentar os complementos do seu item.</FormHelperText>
-            </div>
             <div>
-                <Link className={classes.linkStyle}  color="primary" underline="always">+ Adicionar categoria</Link>
+                <Link className={classes.linkStyle}  color="primary" underline="always"  onClick={()=>{setComplementDialogOpen(true)}}>+ Adicionar categoria</Link>
             </div>
             {
                 complements && complements.map((complement, complementIndex)=>{
@@ -112,7 +116,7 @@ const ItemComplementContent = (props) => {
                             size="small"
                             required
                             fullWidth
-                            id="complement-name"
+                            id={`complement-name-&{complementIndex}`}
                             label="Nome da categoria"
                             name="name"
                             onChange={e => handleComplementChange(complementIndex,e.target.name,e.target.value)}
@@ -181,7 +185,7 @@ const ItemComplementContent = (props) => {
                             value = {option.name}
                             size="small"
                             required
-                            id="option-name"
+                            id={`option-name-${optionIndex}`}
                             label="Complemento"
                             name="name"
                             onChange={(e)=>{handleOptionChange(complementIndex, optionIndex,e.target.name, e.target.value)}}
@@ -193,7 +197,7 @@ const ItemComplementContent = (props) => {
                             fullWidth
                             value = {option.description}
                             size="small"
-                            id="option-description"
+                            id={`optio-description-${optionIndex}`}
                             label="Descrição"
                             name="description"
                             onChange={(e)=>{handleOptionChange(complementIndex, optionIndex,e.target.name, e.target.value)}}
@@ -205,7 +209,7 @@ const ItemComplementContent = (props) => {
                         margin="normal"
                         required
                         fullWidth
-                        id="option-price"
+                        id={`option-price-${optionIndex}`}
                         label="Preço"
                         size="small"
                         InputProps={{
@@ -239,8 +243,10 @@ const ItemComplementContent = (props) => {
                 )
                 })
             }
-        
-
+            <ComplementDialog complementDialogOpen={complementDialogOpen}
+                handleComplementDialogClose={handleComplementDialogClose}
+                handleAddComplement={handleAddComplement}
+                />
         </DialogContent>
     )
 }

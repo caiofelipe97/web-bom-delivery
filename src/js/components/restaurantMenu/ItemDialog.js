@@ -118,8 +118,6 @@ const ItemDialog = (props) => {
         }
         setCategory(categoryId);
         if(isEdit){
-          console.log("isEdit");
-          console.log(item)
           const {img, name, category, description, price, isPaused, complements, id} = item;
           setImg(img);
           setName(name);
@@ -293,7 +291,7 @@ const ItemDialog = (props) => {
           handleComplementChange={handleComplementCategoryChange} 
           handleOptionChange={handleComplementOptionChange} 
           complements={complements}
-
+          setComplements={setComplements}
           />
         }
        
