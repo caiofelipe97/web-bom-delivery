@@ -305,11 +305,11 @@ const editItem = (editedItem, restaurant) =>{
     const {items} = categories[categoryIndex];
     const itemIndex = items.findIndex(item => item.id === editedItem.id);
     categories[categoryIndex].items[itemIndex] = editedItem;
-
+    const arrayOfCategories = JSON.parse(JSON.stringify(categories))
     myFirebase.firestore().collection('restaurants').doc(restaurant.uid).get().then((restaurantSnapshot)=>{
-      myFirebase.firestore().collection("restaurants").doc(restaurantSnapshot.id).update({
-        categories: categories,
-      }).then(()=>{
+      myFirebase.firestore().collection("restaurants").doc(restaurantSnapshot.id).set({
+        categories: arrayOfCategories,
+      },{merge:true}).then(()=>{
         dispatch(EditItemSuccess())
         dispatch(getRestaurant(restaurantSnapshot.id))
     }).catch(error=>{

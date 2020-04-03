@@ -14,7 +14,8 @@ import {
     FormHelperText,
     Dialog,
     Tab,
-    Tabs
+    Tabs,
+    CircularProgress
  } from '@material-ui/core';
 import { makeStyles} from '@material-ui/core/styles';
 import PauseSalesButton from './PauseSalesButton';
@@ -95,6 +96,15 @@ const useStyles = makeStyles( (theme) => ({
       width: 50,
       height: 50,
       color: 'rgba(0,0,0,0.64)'
+    },
+    imgLoading:{
+      width: 100,
+      height: 100,
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      position: 'absolute',
+      backgroundColor: 'white'
     }
 }))
 
@@ -113,7 +123,7 @@ const ItemDialog = (props) => {
     const [imgDialogOpen, setImgDialogOpen] = useState(false);
     const [tabSelected, setTabSelected] = useState(0);
     const [complements, setComplements] = useState([]);
-
+    const [imgLoading, setImgLoading] = useState(true)
     
     const inputLabel = useRef(null);
     const [labelWidth, setLabelWidth] = React.useState(0);
@@ -178,6 +188,8 @@ const ItemDialog = (props) => {
       }
     }
 
+    
+
     return(
       <form  onSubmit={handleItemSave}>
       {isEdit ? <DialogTitle id="category-dialog-title" color="primary">Editar item</DialogTitle>:<DialogTitle id="category-dialog-title" color="primary">Criar item</DialogTitle>}
@@ -199,7 +211,12 @@ const ItemDialog = (props) => {
         <div className={classes.mainDivStyle}>
             <div>
                 <div className={classes.pictureDiv}>
-                 {img && <img alt="crop" className={classes.imgCropped} src={img}/>}
+                 {img && (
+                  <>
+                   {imgLoading && <div className={classes.imgLoading}><CircularProgress size={50}/> </div>}
+                   <img alt="crop" className={classes.imgCropped} src={img} onLoad={()=>{setImgLoading(false)}}/>
+                  </>
+                  )}
                  {!img && <AddAPhotoIcon className={classes.uploadIcon}/>}
                 </div>
                 <Link className={classes.linkStyle} onClick={()=>{setImgDialogOpen(true)}} color="primary" underline="always">Escolher Foto</Link>
