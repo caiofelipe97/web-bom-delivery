@@ -138,6 +138,7 @@ const RestaurantMenu = (props) => {
               <Dialog open={itemDialogOpen}
           onClose={handleItemDialogClose}
           className={classes.itemDialogStyle}
+          scroll='body'
           fullWidth
           maxWidth='md'
           >

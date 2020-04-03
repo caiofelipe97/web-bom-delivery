@@ -21,8 +21,9 @@ import ComplementDialog from './ComplementDialog';
 
 const useStyles = makeStyles( (theme) => ({
     DialogContentStyle:{
-        minWidth: '600px',
-        minHeight: '350px'
+        width: '912px',
+        height: '400px',
+        overflow: 'scroll'
     },
     linkStyle:{
         cursor:'pointer',

@@ -23,6 +23,7 @@ import AddAPhotoIcon from '@material-ui/icons/AddAPhoto';
 import { connect } from "react-redux";
 import {addItemRequest} from "../../actions/restaurant.actions";
 import ItemComplementContent from './ItemComplementContent';
+import DeleteItemDivButton from './DeleteItemDivButton';
 
 const useStyles = makeStyles( (theme) => ({
     ButtonStyle: {
@@ -30,7 +31,9 @@ const useStyles = makeStyles( (theme) => ({
     },
     DialogContentStyle:{
         minWidth: '600px',
-        minHeight: '350px'
+        minHeight: '400px',
+        paddingLeft: 0,
+        paddingRight: 0
 
     },
     linkStyle:{
@@ -58,7 +61,9 @@ const useStyles = makeStyles( (theme) => ({
         width: '100%'
       },
     mainDivStyle:{
-      display: 'flex'
+      display: 'flex',
+      marginLeft: 24,
+      marginRight: 24
     },
     nameDiv:{
       display:'flex',
@@ -284,7 +289,12 @@ const ItemDialog = (props) => {
                 </div>
             </div>
             </div>
+           
         </div>
+        <div>
+            <DeleteItemDivButton/>
+
+            </div>
         </DialogContent>
           :
           <ItemComplementContent 
