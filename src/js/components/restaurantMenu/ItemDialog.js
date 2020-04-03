@@ -164,7 +164,6 @@ const ItemDialog = (props) => {
     const handleComplementCategoryChange = (index, attr, newValue)=>{
       let newComplementsArray = complements.map((complement,i)=> i === index ? {...complement, [attr]:newValue } : complement);
       setComplements(newComplementsArray);
-      
     }
 
     const handleComplementOptionChange = (categoryIndex, optionIndex, attr, newValue) =>{

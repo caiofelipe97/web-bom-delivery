@@ -116,7 +116,7 @@ const ComplementDialog = (props) => {
             </DialogContent>
         <DialogActions>
             <Button className={classes.ButtonStyle} onClick={()=>{
-              handleAddComplement({name:name, min:min, max:max, isRequired:isRequired});
+              handleAddComplement({name:name, min:min, max:max, isRequired:isRequired, options:[]});
               }}  variant="contained"  color="primary">
             Adicionar
           </Button>

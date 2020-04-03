@@ -22,8 +22,7 @@ import ComplementDialog from './ComplementDialog';
 const useStyles = makeStyles( (theme) => ({
     DialogContentStyle:{
         width: '912px',
-        height: '400px',
-        overflow: 'scroll'
+        height: '400px'
     },
     linkStyle:{
         cursor:'pointer',
@@ -95,10 +94,20 @@ const ItemComplementContent = (props) => {
         setComplements([...complements,newComplement])
         handleComplementDialogClose();
     }
+
+    const handleAddOption = (categoryIndex) =>{
+        let newComplementsArray = complements.map((complement,i)=>{ 
+            let newOption = {name: "", description:"", price:0, isPaused:false};
+            return i === categoryIndex ? 
+            { ...complement,options:[...complement.options,newOption]} 
+            : complement});
+        setComplements(newComplementsArray);
+    }
+
     return(
         <DialogContent className={classes.DialogContentStyle}>
             <div>
-                <Link className={classes.linkStyle}  color="primary" underline="always"  onClick={()=>{setComplementDialogOpen(true)}}>+ Adicionar categoria</Link>
+                <Link className={classes.linkStyle}  color="primary" underline="always" onClick={()=>{setComplementDialogOpen(true)}}>+ Adicionar categoria</Link>
             </div>
             {
                 complements && complements.map((complement, complementIndex)=>{
@@ -234,7 +243,7 @@ const ItemComplementContent = (props) => {
             <TableRow>
             <TableCell >
             <div>
-                <Link className={classes.linkStyle} color="primary" underline="always">+ Adicionar complemento</Link>
+                <Link className={classes.linkStyle} color="primary" underline="always"  onClick={()=>{handleAddOption(complementIndex)}}>+ Adicionar complemento</Link>
             </div>
             </TableCell>
             </TableRow>
