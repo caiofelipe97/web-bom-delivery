@@ -18,19 +18,22 @@ const useStyles = makeStyles( (theme) => ({
         fontSize: "0.875rem",
         lineHeight: "1.5rem",
         color: theme.palette.grey[600]
+    },
+    smallTextStyle:{
+        fontSize: "0.825rem"
     }
 }))
 
 
 const PauseSalesButton = (props) => {
     const classes = useStyles();
-    const {divStyle} = props;
+    const {divStyle, small} = props;
     return(
         <div className={ divStyle ? [classes.divStyle, divStyle].join(" ") : classes.divStyle}>
             <IconButton aria-label="pause" color="default" className={classes.buttonStyle}>
                 <PauseCircleOutlineIcon />
             </IconButton>
-            <Typography noWrap  className={classes.textStyle}>Pausar vendas</Typography>
+            <Typography noWrap  className={small? [classes.textStyle,classes.smallTextStyle].join(" "):classes.textStyle}>Pausar vendas</Typography>
         </div>
     )
 }
