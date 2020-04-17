@@ -179,7 +179,6 @@ const CategoryTable = (props) => {
                                 </TableRow>
                                 </TableHead>
                                 <TableBody>
-
                                 {
                                     complement.options && complement.options.map((option,k)=>{
                                         const normalCellItemStyle = [classes.firstTableCell, classes.removeBottomBorder, classes.complementCell].join(" ");

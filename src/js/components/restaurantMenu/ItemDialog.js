@@ -115,16 +115,19 @@ const ItemDialog = (props) => {
 
     const [img, setImg] = useState("");
     const  [name, setName] = useState("");
+    const [nameError, setNameError] = useState(false);
     const  [category, setCategory] = useState(0);
     const  [description, setDescription] = useState("");
-    const [price, setPrice] = useState(0);
+    const [price, setPrice] = useState('1.00');
+    const [priceError, setPriceError] = useState(false);
     const [isPaused, setIsPaused] = useState(false);
     const [id, setId] = useState(0);
     const [imgDialogOpen, setImgDialogOpen] = useState(false);
     const [tabSelected, setTabSelected] = useState(0);
     const [complements, setComplements] = useState([]);
     const [imgLoading, setImgLoading] = useState(true)
-    
+    const [complementError, setComplementError] = useState(false);
+
     const inputLabel = useRef(null);
     const [labelWidth, setLabelWidth] = React.useState(0);
     useEffect(() => {
@@ -170,6 +173,7 @@ const ItemDialog = (props) => {
     const handleTabSelected = (e, newValue)=>{
       setTabSelected(newValue);
     }
+    
 
     const handleComplementCategoryChange = (index, attr, newValue)=>{
       let newComplementsArray = complements.map((complement,i)=> i === index ? {...complement, [attr]:newValue } : complement);
@@ -191,7 +195,22 @@ const ItemDialog = (props) => {
     
 
     return(
-      <form  onSubmit={handleItemSave}>
+      <form  onSubmit={(e)=>{
+        e.preventDefault();
+        if(tabSelected === 0){
+          if(complementError){
+            setTabSelected(1);
+          } else{
+            handleItemSave();
+          }
+        }else {
+          if(nameError || priceError){
+            setTabSelected(0);
+          } else{
+            handleItemSave();
+          }
+        }
+        }}>
       {isEdit ? <DialogTitle id="category-dialog-title" color="primary">Editar item</DialogTitle>:<DialogTitle id="category-dialog-title" color="primary">Criar item</DialogTitle>}
 
         <Tabs
@@ -235,8 +254,17 @@ const ItemDialog = (props) => {
                         type="text"
                         value={name}
                         inputProps={{maxLength: 30}}
-                        onChange={e => setName(e.target.value)}
+                        error={nameError}
+                        onChange={e => {
+                          if(e.target.value.length === 0){
+                            setNameError(true);
+                          } else {
+                            setNameError(false);
+                          }
+                          setName(e.target.value)
+                        }}
                     />
+                   {nameError && <FormHelperText error>Nome não pode ser vazio</FormHelperText>}
                 </FormControl>
                 <FormControl variant="outlined" className={[classes.formControl, classes.categoryInput].join(" ")}>
                   <InputLabel ref={inputLabel} id="select-category-label">
@@ -294,8 +322,18 @@ const ItemDialog = (props) => {
                         name="item-price"
                         type="number"
                         value={price}
-                        onChange={e => setPrice(e.target.value)}
+                        error={priceError}
+                        onChange={e => {
+                          let newPrice = parseFloat(e.target.value)
+                          if(e.target.value.length === 0 || newPrice <= 0){
+                            setPriceError(true);
+                          }else{
+                            setPriceError(false);
+                          }
+                          setPrice(e.target.value)
+                        }}
                     />
+                    {priceError && <FormHelperText error>Adicione algum valor</FormHelperText>}
                 </FormControl>
                 <div className={classes.pauseDiv}>
                 <PauseSalesButton/>
@@ -318,6 +356,7 @@ const ItemDialog = (props) => {
           handleOptionChange={handleComplementOptionChange} 
           complements={complements}
           setComplements={setComplements}
+          setComplementError= {setComplementError}
           />
         }
        
