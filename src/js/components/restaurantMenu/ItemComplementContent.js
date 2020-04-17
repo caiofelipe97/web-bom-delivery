@@ -72,10 +72,13 @@ const useStyles = makeStyles( (theme) => ({
         maxWidth: '35%'
       },
       mediumBodyInput:{
-        maxWidth: '25%'
+        maxWidth: '22%'
       },
       smallBodyInput:{
-        maxWidth: '10%'
+        maxWidth: '13%'
+      },
+      inputAdornment:{
+          paddingLeft: 10
       }
 }))
 
@@ -123,13 +126,16 @@ const ItemComplementContent = (props) => {
                             variant="outlined"
                             margin="normal"
                             value = {complement.name}
+                            error = {complement.name.length === 0}
                             size="small"
                             required
                             fullWidth
                             id={`complement-name-&{complementIndex}`}
                             label="Nome da categoria"
                             name="name"
-                            onChange={e => handleComplementChange(complementIndex,e.target.name,e.target.value)}
+                            onChange={e => {
+                                handleComplementChange(complementIndex,e.target.name,e.target.value)}
+                            }
                         />
                         
                     <Link className={classes.linkStyle}  color="primary" underline="always">Excluir</Link>
@@ -143,13 +149,19 @@ const ItemComplementContent = (props) => {
                                 margin="normal"
                                 type="number"
                                 value = {complement.min}
+                                error = {!complement.min || complement.min <= 0}
+                                inputProps={{
+                                    min:1
+                                }}
                                 required
                                 fullWidth
                                 size="small"
                                 id="min"
                                 label="Qtd. mín."
                                 name="min"
-                                onChange={e => handleComplementChange(complementIndex,e.target.name,parseInt(e.target.value))}
+                                onChange={e => {
+                                    handleComplementChange(complementIndex,e.target.name,e.target.value);
+                                }}
                             />
                             <TextField
                                 className={classes.smallInput}
@@ -157,13 +169,19 @@ const ItemComplementContent = (props) => {
                                 margin="normal"
                                 type="number"
                                 value = {complement.max}
+                                error = {!complement.max || complement.max <= 0 || complement.max < complement.min}
+                                inputProps={{
+                                    min: complement.min ? complement.min : 1
+                                }}
                                 required
                                 fullWidth
                                 size="small"
                                 id="max"
                                 label="Qtd. máx."
                                 name="max"
-                                onChange={e => handleComplementChange(complementIndex,e.target.name,parseInt(e.target.value))}
+                                onChange={e => {
+                                    handleComplementChange(complementIndex,e.target.name, e.target.value);
+                                }}
                             />                    
                         </div>
                         <FormControlLabel
@@ -193,6 +211,7 @@ const ItemComplementContent = (props) => {
                             margin="normal"
                             fullWidth
                             value = {option.name}
+                            error = {option.name.length === 0}
                             size="small"
                             required
                             id={`option-name-${optionIndex}`}
@@ -220,16 +239,24 @@ const ItemComplementContent = (props) => {
                         required
                         fullWidth
                         id={`option-price-${optionIndex}`}
+                        error = {option.price.length === 0 || option.price < 0}
                         label="Preço"
                         size="small"
                         InputProps={{
+                          className:classes.inputAdornment,  
                           startAdornment: <InputAdornment position="start">R$ </InputAdornment>,
-                          inputProps: { min: 0.0, max: 999, step:0.1 }                       
+                          inputProps: { min: 0.0, max: 999, step:0.1, style:{paddingRight:8} }                       
                         }}
                         name="price"
                         type="number"
                         value={option.price}
-                        onChange={(e)=>{handleOptionChange(complementIndex, optionIndex,e.target.name, parseFloat(e.target.value))}}
+                        onChange={(e)=>{
+                            let newPrice = e.target.value;
+                            if(newPrice){
+                                newPrice = parseFloat(newPrice).toFixed(2)
+                            }
+                            handleOptionChange(complementIndex, optionIndex,e.target.name, newPrice)
+                            }}
                     />
                 </FormControl>
                         <PauseSalesButton/>

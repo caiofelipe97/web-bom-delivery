@@ -148,8 +148,7 @@ const ItemDialog = (props) => {
         }
     }, [categoryId,isEdit,item]);
     
-    const handleItemSave = (e) =>{
-      e.preventDefault();
+    const handleItemSave = () =>{
      
       if(!isEdit){
         const newItem = {name,category,description,price, img, isPaused, complements};
@@ -192,13 +191,37 @@ const ItemDialog = (props) => {
       }
     }
 
+    const validateIsRequired = (str) =>{
+      return (str.length !== 0);
+    }
+
+    const validateMinAndMax = (min, max) =>{
+      return (min > 0 && max > 0 && max >= min);
+    }
+
+    const validateOptionPrice = (value) =>{
+      return (value >= 0);
+    }
+
+    const validateComplements = () =>{
+      console.log(complements);
+      let complementsIsValid = complements.every(complement=>{
+        let optionsIsValid = complement.options.every(option =>{
+          return validateIsRequired(option.name) && validateIsRequired(option.price) && validateOptionPrice(option.price)
+        })
+        return validateIsRequired(complement.name) && validateIsRequired(complement.min) && validateIsRequired(complement.max) && validateMinAndMax(complement.min, complement.max) && optionsIsValid
+      })
+      return complementsIsValid;
+    }
+
     
 
     return(
       <form  onSubmit={(e)=>{
         e.preventDefault();
         if(tabSelected === 0){
-          if(complementError){
+          let isValid = validateComplements();
+          if(!isValid){
             setTabSelected(1);
           } else{
             handleItemSave();
@@ -264,7 +287,6 @@ const ItemDialog = (props) => {
                           setName(e.target.value)
                         }}
                     />
-                   {nameError && <FormHelperText error>Nome não pode ser vazio</FormHelperText>}
                 </FormControl>
                 <FormControl variant="outlined" className={[classes.formControl, classes.categoryInput].join(" ")}>
                   <InputLabel ref={inputLabel} id="select-category-label">
@@ -356,7 +378,6 @@ const ItemDialog = (props) => {
           handleOptionChange={handleComplementOptionChange} 
           complements={complements}
           setComplements={setComplements}
-          setComplementError= {setComplementError}
           />
         }
        
