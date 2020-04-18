@@ -107,6 +107,20 @@ const ItemComplementContent = (props) => {
         setComplements(newComplementsArray);
     }
 
+    const handleDeleteOption = (categoryIndex, optionIndex) => {
+        let newComplementsArray = complements.map((complement,i) =>{
+            if(i===categoryIndex){
+                let newOptions = [...complement.options];
+                newOptions.splice(optionIndex,1);
+                return {...complement, options: newOptions}
+            }else{
+                return complement
+            }
+        })
+        setComplements(newComplementsArray)
+    }
+    
+
     return(
         <DialogContent className={classes.DialogContentStyle}>
             <div>
@@ -260,7 +274,7 @@ const ItemComplementContent = (props) => {
                     />
                 </FormControl>
                         <PauseSalesButton/>
-                        <Link className={[classes.linkStyle].join(" ")}  color="primary" underline="always">Excluir</Link>
+                        <Link className={[classes.linkStyle].join(" ")}  color="primary" underline="always" onClick={()=>handleDeleteOption(complementIndex,optionIndex)}>Excluir</Link>
 
                         </div>
                     </TableCell>

@@ -126,7 +126,6 @@ const ItemDialog = (props) => {
     const [tabSelected, setTabSelected] = useState(0);
     const [complements, setComplements] = useState([]);
     const [imgLoading, setImgLoading] = useState(true)
-    const [complementError, setComplementError] = useState(false);
 
     const inputLabel = useRef(null);
     const [labelWidth, setLabelWidth] = React.useState(0);
