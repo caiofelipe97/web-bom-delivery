@@ -47,7 +47,11 @@ const DeleteItemDivButton = (props) => {
         <div className={classes.deleteDiv}>
 
         <div className={ divStyle ? [classes.divStyle, divStyle].join(" ") : classes.divStyle}>
-            <IconButton aria-label="delete" color="default" className={classes.buttonStyle} onClick={() => setConfirmOpen(true)}>
+            <IconButton 
+                aria-label="delete" 
+                color="default" 
+                className={classes.buttonStyle} 
+                onClick={() => setConfirmOpen(true)}>
                 <DeleteIcon fontSize="large" />
             </IconButton>
             <ConfirmDialog

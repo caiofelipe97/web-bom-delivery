@@ -14,10 +14,12 @@ import {
     Checkbox,
     InputAdornment,
     FormControl,
+    DialogContentText
 } from '@material-ui/core';
 import { makeStyles} from '@material-ui/core/styles';
 import PauseSalesButton from './PauseSalesButton';
 import ComplementDialog from './ComplementDialog';
+import ConfirmDialog from '../common/ConfirmDialog';
 
 const useStyles = makeStyles( (theme) => ({
     DialogContentStyle:{
@@ -86,6 +88,7 @@ const useStyles = makeStyles( (theme) => ({
 const ItemComplementContent = (props) => {
     const {complements, handleComplementChange, handleOptionChange, setComplements} = props;
     const [complementDialogOpen, setComplementDialogOpen] = useState(false);
+    const [confirmOpen, setConfirmOpen] = useState(false);
 
     const classes = useStyles();
 
@@ -96,6 +99,12 @@ const ItemComplementContent = (props) => {
     const handleAddComplement = (newComplement) =>{
         setComplements([...complements,newComplement])
         handleComplementDialogClose();
+    }
+
+    const handleDeleteComplement = (complementIndex) => {
+        let newComplementsArray = [...complements];
+        newComplementsArray.splice(complementIndex, 1);
+        setComplements(newComplementsArray);
     }
 
     const handleAddOption = (categoryIndex) =>{
@@ -152,7 +161,17 @@ const ItemComplementContent = (props) => {
                             }
                         />
                         
-                    <Link className={classes.linkStyle}  color="primary" underline="always">Excluir</Link>
+                    <Link className={classes.linkStyle}  color="primary" underline="always" onClick={() => setConfirmOpen(true)}>Excluir</Link>
+                    <ConfirmDialog
+                        title="Confirmação"
+                        open={confirmOpen}
+                        setOpen={setConfirmOpen}
+                        onConfirm={()=>{handleDeleteComplement(complementIndex)}}
+                    >   
+                        <DialogContentText>
+                        Tem certeza que deseja excluir essa categoria? (Para finalizar a ação é necessário salvar o item)
+                        </DialogContentText>
+                    </ConfirmDialog>
                     </div>
 
                     <div className={classes.secondHeadDiv}>
