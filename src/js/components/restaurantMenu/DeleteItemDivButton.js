@@ -1,11 +1,11 @@
-import React from 'react';
-import {Typography, FormHelperText } from '@material-ui/core';
+import React, {useState} from 'react';
+import {Typography, FormHelperText, DialogContentText } from '@material-ui/core';
 import { makeStyles} from '@material-ui/core/styles';
 import DeleteIcon from '@material-ui/icons/Delete';
 import IconButton from '@material-ui/core/IconButton';
+import ConfirmDialog from  '../common/ConfirmDialog';
 
 const useStyles = makeStyles( (theme) =>{
-    console.log(theme);
     return ({
     divStyle: {
         display: 'flex',
@@ -39,14 +39,27 @@ const useStyles = makeStyles( (theme) =>{
 
 const DeleteItemDivButton = (props) => {
     const classes = useStyles();
-    const {divStyle} = props;
+    const {divStyle, deleteHandle} = props;
+    const [confirmOpen, setConfirmOpen] = useState(false);
+
+
     return(
         <div className={classes.deleteDiv}>
 
         <div className={ divStyle ? [classes.divStyle, divStyle].join(" ") : classes.divStyle}>
-            <IconButton aria-label="delete" color="default" className={classes.buttonStyle}>
+            <IconButton aria-label="delete" color="default" className={classes.buttonStyle} onClick={() => setConfirmOpen(true)}>
                 <DeleteIcon fontSize="large" />
             </IconButton>
+            <ConfirmDialog
+                title="Confirmação"
+                open={confirmOpen}
+                setOpen={setConfirmOpen}
+                onConfirm={deleteHandle}
+            >   
+                <DialogContentText>
+                Tem certeza que deseja excluir este item?
+                </DialogContentText>
+            </ConfirmDialog>
             <Typography noWrap  className={classes.textStyle}>Deletar item</Typography>
         </div>
         <div className={classes.helperTextDiv}>

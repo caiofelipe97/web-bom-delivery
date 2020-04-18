@@ -339,3 +339,55 @@ const createItem = (item,restaurant) =>{
     });
   }
 }
+
+export const DELETE_ITEM_REQUEST = "DELETE_ITEM_REQUEST";
+export const DeleteItemRequestStarted = () => {
+    return {
+      type: ADD_ITEM_REQUEST
+    };
+};
+
+export const DELETE_ITEM_SUCCESS = "DELETE_ITEM_SUCCESS";
+export const DeleteItemSuccess = () => {
+    return {
+      type: DELETE_ITEM_SUCCESS
+    };
+};
+
+export const DELETE_ITEM_FAILURE = "DELETE_ITEM_FAILURE";
+export const DeleteItemFailure = (error) => {
+    return {
+      type: DELETE_ITEM_FAILURE,
+      error
+    };
+};
+
+export const deleteItemRequest = (item, restaurant)=>{
+  return dispatch => {
+    dispatch(DeleteItemRequestStarted());
+    let {categories} = restaurant;
+    const categoryIndex = categories.findIndex(category => category.id === item.category);
+    const itemIndex = categories[categoryIndex].items.findIndex(el => el.id === item.id);
+    categories[categoryIndex].items.splice(itemIndex,1);
+    
+    myFirebase.firestore().collection('restaurants').doc(restaurant.uid).get().then((restaurantSnapshot)=>{
+      myFirebase.firestore().collection("restaurants").doc(restaurantSnapshot.id).update({
+        categories: categories,
+      }).then(()=>{
+        if(item.img){
+          let imgRef = storage.ref(`${restaurant.uid}`).child(`${item.id}.jpeg`);
+          imgRef.delete().then(()=>{
+            console.log("Imagem deletada com sucesso");
+          }, ()=>{
+            console.log("Erro ao deletar item");
+          })
+        }
+        dispatch(AddItemSuccess())
+
+        dispatch(getRestaurant(restaurantSnapshot.id))
+    }).catch(error=>{
+        dispatch(AddItemFailure(error));
+    });
+    });
+  }
+} 

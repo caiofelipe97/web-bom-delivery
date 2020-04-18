@@ -22,7 +22,7 @@ import PauseSalesButton from './PauseSalesButton';
 import ItemImageDialogContent from './ItemImageDialogContent';
 import AddAPhotoIcon from '@material-ui/icons/AddAPhoto';
 import { connect } from "react-redux";
-import {addItemRequest} from "../../actions/restaurant.actions";
+import {addItemRequest, deleteItemRequest} from "../../actions/restaurant.actions";
 import ItemComplementContent from './ItemComplementContent';
 import DeleteItemDivButton from './DeleteItemDivButton';
 
@@ -110,7 +110,7 @@ const useStyles = makeStyles( (theme) => ({
 
 
 const ItemDialog = (props) => {
-    const {handleItemDialogClose, categories, categoryId, addItem, restaurant, isEdit, item} = props;
+    const {handleItemDialogClose, categories, categoryId, addItem, restaurant, isEdit, item, deleteItem} = props;
     const classes = useStyles();
 
     const [img, setImg] = useState("");
@@ -125,7 +125,8 @@ const ItemDialog = (props) => {
     const [imgDialogOpen, setImgDialogOpen] = useState(false);
     const [tabSelected, setTabSelected] = useState(0);
     const [complements, setComplements] = useState([]);
-    const [imgLoading, setImgLoading] = useState(true)
+    const [imgLoading, setImgLoading] = useState(true);
+    
 
     const inputLabel = useRef(null);
     const [labelWidth, setLabelWidth] = React.useState(0);
@@ -158,6 +159,12 @@ const ItemDialog = (props) => {
       }
       handleItemDialogClose();
      }
+
+    const handleItemDelete = () => {
+      const {item, restaurant} = props;
+      deleteItem(item,restaurant);
+      handleItemDialogClose();
+    }
 
     const handleSelectImage = (croppedImg) =>{
       setImg(croppedImg);
@@ -203,7 +210,6 @@ const ItemDialog = (props) => {
     }
 
     const validateComplements = () =>{
-      console.log(complements);
       let complementsIsValid = complements.every(complement=>{
         let optionsIsValid = complement.options.every(option =>{
           return validateIsRequired(option.name) && validateIsRequired(option.price) && validateOptionPrice(option.price)
@@ -367,8 +373,7 @@ const ItemDialog = (props) => {
            
         </div>
         <div>
-            <DeleteItemDivButton/>
-
+            {isEdit && <DeleteItemDivButton deleteHandle={handleItemDelete}/>}
             </div>
         </DialogContent>
           :
@@ -379,7 +384,6 @@ const ItemDialog = (props) => {
           setComplements={setComplements}
           />
         }
-       
         <DialogActions>
             <Button type="submit" className={classes.ButtonStyle}  variant="contained"  color="primary">
             Salvar
@@ -389,6 +393,8 @@ const ItemDialog = (props) => {
           </Button>
           
         </DialogActions>
+
+
         <Dialog
           open={imgDialogOpen}
           onClose={handleImgDialogClose}
@@ -398,12 +404,15 @@ const ItemDialog = (props) => {
         <DialogTitle id="img-dialog-title" color="primary">Selecione uma imagem para o item</DialogTitle>
           <ItemImageDialogContent  handleImgDialogClose={handleImgDialogClose} handleSelectImage={handleSelectImage}/>
       </Dialog>
+
+
       </form>
 )
 }
 
 const mapDispatchToProps = dispatch => ({
   addItem: ( item, restaurant) => dispatch(addItemRequest( item, restaurant)),
+  deleteItem: ( item, restaurant) => dispatch(deleteItemRequest(item, restaurant))
 });
 
 function mapStateToProps(state) {
