@@ -292,7 +292,7 @@ const ItemComplementContent = (props) => {
                             }}
                     />
                 </FormControl>
-                        <PauseSalesButton/>
+                <PauseSalesButton isPaused={option.isPaused} setIsPaused={()=>{handleOptionChange(complementIndex, optionIndex, 'isPaused', !option.isPaused)}}/>
                         <Link className={[classes.linkStyle].join(" ")}  color="primary" underline="always" onClick={()=>handleDeleteOption(complementIndex,optionIndex)}>Excluir</Link>
 
                         </div>

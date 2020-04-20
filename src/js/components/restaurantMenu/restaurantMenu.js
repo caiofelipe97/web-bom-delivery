@@ -10,6 +10,8 @@ import { connect } from "react-redux";
 import {addOrEditCategory, addItemRequest} from "../../actions/restaurant.actions";
 import ItemDialog from './ItemDialog';
 
+const MenuTypesEnum = {"category":1, "item":2, "complement":3};
+
 const useStyles = makeStyles( _ => ({
     dividerStyle: {
         marginTop: 15,
@@ -36,7 +38,7 @@ const useStyles = makeStyles( _ => ({
 
 const RestaurantMenu = (props) => {
     const classes = useStyles();
-    const { restaurant, addOrEditCategory, loading, duplicateItem } = props;
+    const { restaurant, addOrEditCategory, loading, addOrEditItem } = props;
     const [categoryDialogOpen, setCategoryDialogOpen] = useState(false);
     const [itemDialogOpen, setItemDialogOpen] = useState(false);
     const [isCategoryEdit, setIsCategoryEdit] = useState(false);
@@ -58,7 +60,6 @@ const RestaurantMenu = (props) => {
     }
 
     const handleItemDialogOpen = (categoryId, isEdit, item) => {
-      console.log(item)
       setItemSelected(item);
       setIsEdit(isEdit);
       setCategoryId(categoryId);
@@ -85,8 +86,45 @@ const RestaurantMenu = (props) => {
       const handleDuplicateItem = (item)=>{
         console.log(item);
         const duplicatedItem = {...item, id: 0};
-        duplicateItem(duplicatedItem, restaurant);
+        addOrEditItem(duplicatedItem, restaurant);
+      }
 
+      const handlePause = (type, categoryIndex, itemIndex, complementIndex, optionIndex) => {
+        if(!restaurant || !restaurant.categories || !type){
+          console.error("Error on pause element")
+          return
+        }
+        let editedCategory = restaurant.categories[categoryIndex];
+        if(!editedCategory){
+          console.error("Error on pause element")
+          return
+        }
+        if(type === MenuTypesEnum.category){
+          editedCategory = {...editedCategory, isPaused: !editedCategory.isPaused}
+          addOrEditCategory(restaurant.uid, restaurant, editedCategory, categoryIndex);
+        }else if(type === MenuTypesEnum.item){
+          let editedItem = {...editedCategory.items[itemIndex]}
+          if(editedItem){
+            editedItem.isPaused = !editedItem.isPaused
+            addOrEditItem(editedItem, restaurant);
+          }
+        }else if(type === MenuTypesEnum.complement){
+          let editedItem = {...editedCategory.items[itemIndex]}
+          if(editedItem){
+            editedItem.complements = editedItem.complements.map((complement, i)=>{
+              return i === complementIndex ? 
+               {...complement, options: complement.options.map((option, j) =>{
+                  return j === optionIndex ?
+                  {...option, isPaused: !option.isPaused}
+                  :
+                  option
+                }) }
+              :
+               complement
+            })
+          addOrEditItem(editedItem, restaurant)
+          }
+        }
       }
 
     return(
@@ -123,6 +161,7 @@ const RestaurantMenu = (props) => {
                 category={category} 
                 index={i} 
                 handleDuplicateItem={handleDuplicateItem}
+                handlePause= {handlePause}
                 />
               })}
             </div>
@@ -158,7 +197,7 @@ const RestaurantMenu = (props) => {
 
 const mapDispatchToProps = dispatch => ({
   addOrEditCategory: (restaurantId, restaurant,categoryName, categoryIndex) => dispatch(addOrEditCategory(restaurantId, restaurant, categoryName, categoryIndex)),
-  duplicateItem: ( item, restaurant) => dispatch(addItemRequest(item,restaurant)),
+  addOrEditItem: ( item, restaurant) => dispatch(addItemRequest(item,restaurant)),
 });
 
 function mapStateToProps(state) {

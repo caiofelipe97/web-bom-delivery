@@ -26,6 +26,7 @@ import {addItemRequest, deleteItemRequest} from "../../actions/restaurant.action
 import ItemComplementContent from './ItemComplementContent';
 import DeleteItemDivButton from './DeleteItemDivButton';
 
+
 const useStyles = makeStyles( (theme) => ({
     ButtonStyle: {
         width: '50%',
@@ -105,6 +106,9 @@ const useStyles = makeStyles( (theme) => ({
       justifyContent: 'center',
       position: 'absolute',
       backgroundColor: 'white'
+    },
+    isPausedColor:{
+      color: '#F25105'
     }
 }))
 
@@ -130,6 +134,8 @@ const ItemDialog = (props) => {
 
     const inputLabel = useRef(null);
     const [labelWidth, setLabelWidth] = React.useState(0);
+
+
     useEffect(() => {
         if(inputLabel.current){
             setLabelWidth(inputLabel.current.offsetWidth);
@@ -177,8 +183,7 @@ const ItemDialog = (props) => {
 
     const handleTabSelected = (e, newValue)=>{
       setTabSelected(newValue);
-    }
-    
+    }    
 
     const handleComplementCategoryChange = (index, attr, newValue)=>{
       let newComplementsArray = complements.map((complement,i)=> i === index ? {...complement, [attr]:newValue } : complement);
@@ -328,7 +333,7 @@ const ItemDialog = (props) => {
                         name="item-description"
                         type="text"
                         value={description}
-                        inputProps={{maxLength: 30}}
+                        inputProps={{maxLength: 100}}
                         onChange={e => setDescription(e.target.value)}
                     />
                 </FormControl>
@@ -363,9 +368,9 @@ const ItemDialog = (props) => {
                     {priceError && <FormHelperText error>Adicione algum valor</FormHelperText>}
                 </FormControl>
                 <div className={classes.pauseDiv}>
-                <PauseSalesButton/>
+                <PauseSalesButton isPaused = {isPaused} setIsPaused={setIsPaused}/>
 
-                <FormHelperText> Se a venda estiver pausada este item não aparecerá na sua lista de itens do aplicativo Bom Delivery</FormHelperText>
+                <FormHelperText className={isPaused ? classes.isPausedColor : ''}> Se a venda estiver pausada este item não aparecerá na sua lista de itens do aplicativo Bom Delivery</FormHelperText>
 
                 </div>
             </div>

@@ -100,7 +100,7 @@ const useStyles = makeStyles(theme => {
 
 const CategoryTable = (props) => {
     const classes = useStyles();
-    const {category, handleCategoryEdit, index, handleItemDialogOpen, handleDuplicateItem} = props;
+    const {category, handleCategoryEdit, index, handleItemDialogOpen, handleDuplicateItem, handlePause} = props;
     const [collapsed, setCollapsed] = useState(-1);
 
 
@@ -112,7 +112,7 @@ const CategoryTable = (props) => {
           <TableRow>
             <TableCell className={[classes.tableCellStyle,classes.titleTableStyle, classes.firstTableCell].join(" ")}>{category.name}</TableCell>
             <TableCell className={[classes.tableCellStyle, classes.secondTableCell].join(" ")}>
-            <PauseSalesButton/>
+            <PauseSalesButton  isPaused={category.isPaused} setIsPaused={()=>{handlePause(1, index)}}/>
             </TableCell>
             <TableCell className={classes.tableCellStyle}  align="right">
             <div>
@@ -134,7 +134,9 @@ const CategoryTable = (props) => {
                     <Typography className={[classes.itemTextStyle,classes.priceTextColor].join(" ")}>{formatMoney(item.price)}</Typography>
                     </div>
                     </TableCell>
-                    <TableCell className={classes.removeBottomBorder}><PauseSalesButton/></TableCell>
+                    <TableCell className={classes.removeBottomBorder}>
+                        <PauseSalesButton   isPaused={item.isPaused}  setIsPaused={()=>{handlePause(2, index, itemIndex)}}/>
+                    </TableCell>
                     <TableCell className={classes.removeBottomBorder}>
                     <div className={classes.editDiv}>
                         <Link className={classes.linkStyle} onClick={()=>{handleDuplicateItem(item)}} color="primary" underline="always">Duplicar</Link>
@@ -166,9 +168,9 @@ const CategoryTable = (props) => {
                 <TableRow>
                 <TableCell colSpan="4" className={classes.collapseCell}>
                     <Collapse in={ itemIndex === collapsed } timeout="auto" unmountOnExit>
-                        { item.complements && item.complements.length > 0 ? item.complements.map((complement,j)=>{
+                        { item.complements && item.complements.length > 0 ? item.complements.map((complement,complementIndex)=>{
                             return (
-                            <Table className={classes.table} aria-label="category table" key={j}>
+                            <Table className={classes.table} aria-label="category table" key={complementIndex}>
                             <TableHead>
                                 <TableRow>
                                     <TableCell className={[classes.firstTableCell, classes.removeBottomBorder, classes.complementNamePadding].join(" ")}>
@@ -180,12 +182,12 @@ const CategoryTable = (props) => {
                                 </TableHead>
                                 <TableBody>
                                 {
-                                    complement.options && complement.options.map((option,k)=>{
+                                    complement.options && complement.options.map((option,optionIndex)=>{
                                         const normalCellItemStyle = [classes.firstTableCell, classes.removeBottomBorder, classes.complementCell].join(" ");
                                         const lastCellItemStyle =  [classes.firstTableCell, classes.removeBottomBorder, classes.complementCell, classes.LastComplementCell].join(" ");
                                         return(
-                                            <TableRow key={k}>
-                                            <TableCell className={k === (complement.options.length -1) ? 
+                                            <TableRow key={optionIndex}>
+                                            <TableCell className={optionIndex === (complement.options.length -1) ? 
                                             lastCellItemStyle
                                             :
                                             normalCellItemStyle}
@@ -195,11 +197,11 @@ const CategoryTable = (props) => {
                                                     <Typography className={[classes.optionTextStyle,classes.priceTextColor].join(" ")}>{formatMoney(option.price)}</Typography>
                                                 </div>
                                             </TableCell>
-                                            <TableCell className={k === (complement.options.length -1) ? 
+                                            <TableCell className={optionIndex === (complement.options.length -1) ? 
                                             lastCellItemStyle
                                             :
                                             normalCellItemStyle}
-                                            ><PauseSalesButton small/></TableCell>
+                                            ><PauseSalesButton small isPaused={option.isPaused} setIsPaused={()=>{handlePause(3, index, itemIndex, complementIndex,optionIndex)}}/></TableCell>
                                             <TableCell className={[classes.invisibleCell, classes.removeBottomBorder, classes.complementCell].join(" ")}/>
                                         </TableRow>
                                         )
