@@ -9,6 +9,7 @@ import DeliveryForm from "./DeliveryForm";
 import {editRestaurantRequest, uploadRestaurantImg} from "../../actions/restaurant.actions";
 import ImageUploadDialogContent from "./ImageUploadDialogContent";
 import PageTitle from "../common/PageTitle";
+import UserForm from "./UserForm";
 
 const useStyles = makeStyles(() => ({
   formFlexbox:{
@@ -61,7 +62,7 @@ const useStyles = makeStyles(() => ({
 const Profile = (props) => {
   const classes = useStyles();
 
-  const { restaurant, editRestaurant, loading, uploadImg } = props;
+  const { restaurant, editRestaurant, loading, uploadImg, user } = props;
 
   const [img, setImg] = useState("");
 
@@ -84,7 +85,10 @@ const Profile = (props) => {
   const [isChanged, setIsChanged] = useState(false);
   const [isCanceled, setIsCanceled] = useState(false);
 
+  const [newPasswordLoading, setNewPasswordLoading] = useState(false);
+
   useEffect(() => {    
+    console.log(user);
     if(Object.entries(restaurant).length !== 0 && restaurant.constructor === Object){
       const {name, foods, timeToDelivery, deliveryPrice, paymentMethods, img} = restaurant;
       setImg(img);
@@ -160,13 +164,12 @@ const Profile = (props) => {
 
   return(
     <div>
-      { loading &&
+      { (loading || newPasswordLoading) &&
       <div className={classes.progressContainer}>
         <CircularProgress className={classes.circularProgress} size={100}/>
       </div>
       }
       <PageTitle title={"Perfil"}/>
-        <form  onSubmit={handleSubmit} className={classes.formFlexbox}>
           <div className={classes.imgDivStyle}>
             {
               img && <CardMedia component="img" src={img} className={classes.imgStyle}/>
@@ -180,6 +183,12 @@ const Profile = (props) => {
               Trocar Imagem
             </Button>
           </div>
+          <div
+            className={classes.formFlexbox}>
+            <UserForm user={user} newPasswordLoading={newPasswordLoading} setNewPasswordLoading={setNewPasswordLoading}/>
+          </div>
+          <form  onSubmit={handleSubmit} className={classes.formFlexbox}>
+
           <StoreForm 
             name={name} 
             setName={(name)=>{
@@ -286,7 +295,8 @@ const mapDispatchToProps = dispatch => ({
 function mapStateToProps(state) {
     return {
       restaurant: state.restaurant.restaurant,
-      loading: state.restaurant.loading
+      loading: state.restaurant.loading,
+      user: state.auth.user,
     };
 }
 
