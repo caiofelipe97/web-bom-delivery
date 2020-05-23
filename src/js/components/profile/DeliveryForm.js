@@ -48,7 +48,7 @@ const useStyles = makeStyles(theme => ({
   timeFormGroup: {
     display: "flex",
     flexDirection: "row",
-    justifyContent: "space-around",
+    justifyContent: "space-between",
     [theme.breakpoints.down("sm")]: {
       flexDirection: "column"
     }
@@ -58,6 +58,9 @@ const useStyles = makeStyles(theme => ({
   },
   paymentMethodsDiv: {
     margin: theme.spacing(1)
+  },
+  maxTime: {
+    marginRight: 30
   }
 }));
 
@@ -174,7 +177,9 @@ const DeliveryForm = props => {
                 }
               />
             </FormControl>
-            <FormControl className={classes.tinyFormControl}>
+            <FormControl
+              className={[classes.tinyFormControl, classes.maxTime].join(" ")}
+            >
               <TextField
                 required
                 margin="normal"

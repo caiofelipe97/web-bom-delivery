@@ -67,6 +67,9 @@ const useStyles = makeStyles(() => ({
     right: 0,
     minHeight: "100%",
     marginLeft: 240
+  },
+  button: {
+    width: 100
   }
 }));
 
@@ -301,13 +304,18 @@ const Profile = props => {
           </DialogActions>
         </Dialog>
         <div className={classes.buttons}>
-          <Button variant="contained" color="secondary" type="submit">
+          <Button
+            variant="contained"
+            color="secondary"
+            type="submit"
+            className={classes.button}
+          >
             Salvar
           </Button>
           <Button
             disabled={!isChanged}
             onClick={handleCancelDialogOpen}
-            className={classes.cancelButton}
+            className={[classes.cancelButton, classes.button].join(" ")}
             variant="contained"
           >
             cancelar
