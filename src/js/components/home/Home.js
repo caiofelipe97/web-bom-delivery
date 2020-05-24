@@ -11,7 +11,8 @@ import {
   Divider,
   ListItem,
   ListItemText,
-  IconButton
+  IconButton,
+  ListItemIcon
 } from "@material-ui/core";
 import { Route, Switch, NavLink } from "react-router-dom";
 import Hidden from "@material-ui/core/Hidden";
@@ -22,6 +23,10 @@ import RestaurantStatus from "../common/RestaurantStatus";
 import Profile from "../profile/profile";
 import RestaurantMenu from "../restaurantMenu/RestaurantMenu";
 import Dashboard from "../dashboard/dashboard";
+import AssessmentIcon from "@material-ui/icons/Assessment";
+import MenuBookIcon from "@material-ui/icons/MenuBook";
+import AccountBoxIcon from "@material-ui/icons/AccountBox";
+import ExitToAppIcon from "@material-ui/icons/ExitToApp";
 
 const drawerWidth = 240;
 const useStyles = makeStyles(theme => {
@@ -44,13 +49,32 @@ const useStyles = makeStyles(theme => {
     },
     drawerPaper: {
       width: drawerWidth,
-      backgroundColor: "#efefef"
+      backgroundColor: "#f6f6f6"
     },
     content: {
       flexGrow: 1,
       padding: theme.spacing(3)
     },
-    toolbar: theme.mixins.toolbar,
+    toolbar: {
+      display: "flex",
+      alignItems: "center",
+      padding: theme.spacing(0, 1),
+      // necessary for content to be below app bar
+      ...theme.mixins.toolbar,
+      justifyContent: "center"
+    },
+    divider: {
+      alignSelf: "center",
+      width: 60,
+      backgroundColor: theme.palette.primary.light,
+      margin: "auto",
+      height: 2
+    },
+    firstDivider: {
+      [theme.breakpoints.up("md")]: {
+        height: 0
+      }
+    },
     firstHeaderStyle: {
       display: "block",
       width: drawerWidth
@@ -65,10 +89,17 @@ const useStyles = makeStyles(theme => {
       color: "#000"
     },
     inactiveStyle: {
-      backgroundColor: "#efefef"
+      display: "flex",
+      backgroundColor: "#f6f6f6"
     },
     activeStyle: {
-      backgroundColor: "#e6e6e6"
+      color: theme.palette.primary.light
+    },
+    activeText: {
+      fontWeight: "bold"
+    },
+    activeIcon: {
+      color: theme.palette.primary.light
     },
     menuButton: {
       marginRight: theme.spacing(2),
@@ -96,11 +127,15 @@ const Home = props => {
 
   const drawer = (
     <div>
-      <div className={classes.toolbar} />
-      <Divider />
+      <div className={classes.toolbar}>
+        <Typography color="primary" variant="h6" noWrap>
+          Bom delivery
+        </Typography>
+      </div>
+      <Divider className={[classes.divider, classes.firstDivider].join(" ")} />
       <List>
         {[
-          { route: "/", text: "Início" },
+          { route: "/", text: "Painel de Controle" },
           { route: "/profile", text: "Perfil" },
           { route: "/menu", text: "Cardápio" }
         ].map((el, index) => (
@@ -112,23 +147,39 @@ const Home = props => {
               setMobileOpen(false);
             }}
           >
-            <ListItem
-              button
-              key={index}
-              className={
-                location.pathname === el.route
-                  ? classes.activeStyle
-                  : classes.inactiveStyle
-              }
-            >
-              <ListItemText primary={el.text} />
+            <ListItem button key={index} className={classes.inactiveStyle}>
+              <ListItemIcon
+                className={
+                  location.pathname === el.route ? classes.activeIcon : ""
+                }
+              >
+                {index === 0 && <AssessmentIcon />}
+                {index === 1 && <AccountBoxIcon />}
+                {index === 2 && <MenuBookIcon />}
+              </ListItemIcon>
+              <ListItemText
+                disableTypography
+                primary={
+                  <Typography
+                    type="body1"
+                    className={
+                      location.pathname === el.route ? classes.activeText : ""
+                    }
+                  >
+                    {el.text}
+                  </Typography>
+                }
+              />
             </ListItem>
           </NavLink>
         ))}
       </List>
-      <Divider />
+      <Divider className={classes.divider} />
       <List>
         <ListItem onClick={handleLogout} button key={"Sair"}>
+          <ListItemIcon>
+            <ExitToAppIcon />
+          </ListItemIcon>
           <ListItemText primary={"Sair"} />
         </ListItem>
       </List>
