@@ -20,7 +20,7 @@ import ImageUploadDialogContent from "./ImageUploadDialogContent";
 import PageTitle from "../common/PageTitle";
 import UserForm from "./UserForm";
 
-const useStyles = makeStyles(() => ({
+const useStyles = makeStyles(theme => ({
   formFlexbox: {
     display: "flex",
     flexDirection: "column",
@@ -66,7 +66,10 @@ const useStyles = makeStyles(() => ({
     bottom: 0,
     right: 0,
     minHeight: "100%",
-    marginLeft: 240
+    marginLeft: 240,
+    [theme.breakpoints.down("sm")]: {
+      marginLeft: 0
+    }
   },
   button: {
     width: 100
@@ -131,7 +134,7 @@ const Profile = props => {
       setDeliveryPrice(deliveryPrice);
       setPaymentMethods(paymentMethods);
     }
-  }, [restaurant, img, isCanceled]);
+  }, [restaurant, img, isCanceled, user]);
 
   const handleSubmit = e => {
     e.preventDefault();
