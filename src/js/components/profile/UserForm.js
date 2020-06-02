@@ -4,7 +4,9 @@ import { myFirebase } from "../../firebase/firebase";
 import firebase from "firebase/app";
 import OutlinedDiv from "../common/OutlinedDiv";
 import { makeStyles } from "@material-ui/core/styles";
+import { connect } from "react-redux";
 import PasswordDialog from "./passwordDialog";
+import { showSuccessToast, showErrorToast } from "../../actions/toast.actions";
 
 const useStyles = makeStyles(theme => ({
   outlinedDiv: {
@@ -49,7 +51,13 @@ const useStyles = makeStyles(theme => ({
 }));
 
 const UserForm = props => {
-  const { user, newPasswordLoading, setNewPasswordLoading } = props;
+  const {
+    user,
+    newPasswordLoading,
+    setNewPasswordLoading,
+    showSuccess,
+    showError
+  } = props;
   const { email } = user;
   const classes = useStyles();
 
@@ -81,11 +89,11 @@ const UserForm = props => {
             .updatePassword(newPassword)
             .then(function() {
               setNewPasswordLoading(false);
-              console.log("Deu bom!");
+              showSuccess("Senha atualizada com sucesso!");
             })
             .catch(function(error) {
               setNewPasswordLoading(false);
-              console.log(error);
+              showError("Erro ao atualizar a senha, tente novamente!");
             });
           setCurrentPassword("");
           setNewPassword("");
@@ -164,4 +172,9 @@ const UserForm = props => {
   );
 };
 
-export default UserForm;
+const mapDispatchToProps = dispatch => ({
+  showSuccess: message => dispatch(showSuccessToast(message)),
+  showError: message => dispatch(showErrorToast(message))
+});
+
+export default connect(null, mapDispatchToProps)(UserForm);
