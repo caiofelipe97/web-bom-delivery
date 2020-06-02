@@ -19,7 +19,7 @@ const useStyles = makeStyles(theme => ({
     marginTop: 20,
     width: 600,
     [theme.breakpoints.down("sm")]: {
-      width: 350
+      width: "100%"
     }
   },
   restaurantDiv: {
