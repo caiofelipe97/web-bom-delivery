@@ -22,7 +22,7 @@ import PauseSalesButton from './PauseSalesButton';
 import ItemImageDialogContent from './ItemImageDialogContent';
 import AddAPhotoIcon from '@material-ui/icons/AddAPhoto';
 import { connect } from "react-redux";
-import {addItemRequest, deleteItemRequest} from "../../actions/restaurant.actions";
+import {addItemRequest, deleteItemRequest}  from "../../actions";
 import ItemComplementContent from './ItemComplementContent';
 import DeleteItemDivButton from './DeleteItemDivButton';
 

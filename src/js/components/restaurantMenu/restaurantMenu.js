@@ -10,7 +10,7 @@ import { connect } from "react-redux";
 import {
   addOrEditCategory,
   addItemRequest
-} from "../../actions/restaurant.actions";
+} from "../../actions";
 import ItemDialog from "./ItemDialog";
 
 const MenuTypesEnum = { category: 1, item: 2, complement: 3 };
