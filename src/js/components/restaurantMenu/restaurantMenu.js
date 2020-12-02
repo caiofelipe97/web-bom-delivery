@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import PageTitle from "../common/PageTitle";
 import PageSubtitle from "../common/PageSubtitle";
 import { Divider, Button, CircularProgress, Dialog } from "@material-ui/core";
@@ -9,7 +9,8 @@ import CategoryTable from "./CategoryTable";
 import { connect } from "react-redux";
 import {
   addOrEditCategory,
-  addItemRequest
+  addItemRequest,
+  getItemsRequest
 } from "../../actions";
 import ItemDialog from "./ItemDialog";
 
@@ -43,7 +44,7 @@ const useStyles = makeStyles(theme => ({
 
 const RestaurantMenu = props => {
   const classes = useStyles();
-  const { restaurant, addOrEditCategory, loading, addOrEditItem } = props;
+  const { restaurant, addOrEditCategory, loading, addOrEditItem, items, getItems } = props;
   const [categoryDialogOpen, setCategoryDialogOpen] = useState(false);
   const [itemDialogOpen, setItemDialogOpen] = useState(false);
   const [isCategoryEdit, setIsCategoryEdit] = useState(false);
@@ -65,6 +66,12 @@ const RestaurantMenu = props => {
     price: "",
     complements: []
   });
+
+  useEffect(()=>{
+    if(restaurant.uid){
+      getItems(restaurant.uid);
+    }
+  },[getItems, restaurant.uid])
 
   const handleCategoryDialogClose = () => {
     setCategoryDialogOpen(false);
@@ -101,7 +108,6 @@ const RestaurantMenu = props => {
   };
 
   const handleDuplicateItem = item => {
-    console.log(item);
     const duplicatedItem = { ...item, id: 0 };
     addOrEditItem(duplicatedItem, restaurant);
   };
@@ -159,6 +165,20 @@ const RestaurantMenu = props => {
     }
   };
 
+  const categoryItems = useMemo( () => {
+    if(restaurant.categories && restaurant.categories.length > 0){
+      const categories = [...restaurant.categories];
+      return categories.map(category=>{
+      const filteredItems = items.filter(item =>{
+        return item.category === category.id;
+      }) 
+      return {...category, items: filteredItems};
+    })
+    } else {
+      return [];
+    }
+  },[items, restaurant.categories])
+
   return (
     <div>
       {loading && (
@@ -185,9 +205,8 @@ const RestaurantMenu = props => {
         </Button>
       </div>
       <div className={classes.tablesDiv}>
-        {restaurant &&
-          restaurant.categories &&
-          restaurant.categories.map((category, i) => {
+        { categoryItems &&
+          categoryItems.map((category, i) => {
             return (
               <CategoryTable
                 handleItemDialogOpen={handleItemDialogOpen}
@@ -237,13 +256,16 @@ const mapDispatchToProps = dispatch => ({
       addOrEditCategory(restaurantId, restaurant, categoryName, categoryIndex)
     ),
   addOrEditItem: (item, restaurant) =>
-    dispatch(addItemRequest(item, restaurant))
+    dispatch(addItemRequest(item, restaurant)),
+  getItems: (restaurant) =>
+      dispatch(getItemsRequest(restaurant))
 });
 
 function mapStateToProps(state) {
   return {
     restaurant: state.restaurant.restaurant,
-    loading: state.restaurant.loading
+    loading: state.restaurant.loading,
+    items: state.item.items
   };
 }
 

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { connect } from "react-redux";
 import { logoutUser } from "../../actions";
 import { makeStyles, useTheme } from "@material-ui/core/styles";
@@ -17,7 +17,9 @@ import {
 import { Route, Switch, NavLink } from "react-router-dom";
 import Hidden from "@material-ui/core/Hidden";
 import MenuIcon from "@material-ui/icons/Menu";
-
+import {
+  getRestaurant
+} from "../../actions/restaurant.actions";
 import RestaurantHeader from "../common/RestaurantHeader";
 import RestaurantStatus from "../common/RestaurantStatus";
 import Profile from "../profile/profile";
@@ -111,6 +113,7 @@ const useStyles = makeStyles(theme => {
 });
 
 const Home = props => {
+  const { user, restaurant, location } = props;
   const classes = useStyles();
   const theme = useTheme();
   const [mobileOpen, setMobileOpen] = useState(false);
@@ -119,11 +122,18 @@ const Home = props => {
     setMobileOpen(!mobileOpen);
   };
 
-  const { user, restaurant, location } = props;
+  useEffect(()=>{
+    if(user.restaurantId)
+      getRestaurant(user.restaurantId)
+  },[user])
+
+
   const handleLogout = () => {
     const { dispatch } = props;
     dispatch(logoutUser());
   };
+
+
 
   const drawer = (
     <div>

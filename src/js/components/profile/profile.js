@@ -14,7 +14,7 @@ import AddressForm from "./AddressForm";
 import DeliveryForm from "./DeliveryForm";
 import {
   editRestaurantRequest,
-  uploadRestaurantImg
+  uploadRestaurantImg,
 } from "../../actions/restaurant.actions";
 import ImageUploadDialogContent from "./ImageUploadDialogContent";
 import PageTitle from "../common/PageTitle";
@@ -105,7 +105,6 @@ const Profile = props => {
   const [newPasswordLoading, setNewPasswordLoading] = useState(false);
 
   useEffect(() => {
-    console.log(user);
     if (
       Object.entries(restaurant).length !== 0 &&
       restaurant.constructor === Object

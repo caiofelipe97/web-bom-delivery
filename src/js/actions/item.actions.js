@@ -12,9 +12,10 @@ export const GetItemsRequestStarted = () => {
 };
 
 export const GET_ITEMS_SUCCESS = "GET_ITEMS_SUCCESS";
-export const GetItemsSuccess = () => {
+export const GetItemsSuccess = ({items}) => {
   return {
-    type: GET_ITEMS_SUCCESS
+    type: GET_ITEMS_SUCCESS,
+    items
   };
 };
 
@@ -92,6 +93,24 @@ export const EditItemFailure = error => {
     error
   };
 };
+
+export const getItemsRequest = (restaurantId) => {
+  return dispatch => {
+    myFirebase
+    .firestore()
+    .collection("items")
+    .where('restaurant', '==', restaurantId).get().then(snapshot =>{
+      if(snapshot.isEmpty) {
+        dispatch(GetItemsSuccess({items: []}));
+      } 
+      const restaurantItems = snapshot.docs.map(doc => doc.data());
+      dispatch(GetItemsSuccess({items: restaurantItems}));
+    }).catch(err =>{
+      dispatch(showErrorToast("Erro ao recuperar os items"));
+      dispatch(GetItemsFailure(err));
+    })
+  }
+}
 
 export const addItemRequest = (item, restaurant) => {
   return dispatch => {

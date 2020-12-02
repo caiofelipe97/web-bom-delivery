@@ -140,7 +140,7 @@ const CategoryTable = (props) => {
                     <div className={classes.editDiv}>
                         <Link className={classes.linkStyle} onClick={()=>{handleDuplicateItem(item)}} color="primary" underline="always">Duplicar</Link>
 
-                        <Link className={classes.linkStyle} onClick={()=>{handleItemDialogOpen(category.id, true, item)}}color="primary" underline="always">Editar</Link>
+                        <Link className={classes.linkStyle} onClick={()=>{handleItemDialogOpen(category.id, true, item)}} color="primary" underline="always">Editar</Link>
 
                     </div>
                     
