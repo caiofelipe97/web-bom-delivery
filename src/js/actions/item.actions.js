@@ -3,6 +3,7 @@ import { myFirebase, storage } from "../firebase/firebase";
 import { getFileBlob } from "../utils/utils";
 import { getRestaurant } from "./restaurant.actions";
 import { showSuccessToast, showErrorToast } from "./toast.actions";
+import { v4 as uuidv4 } from 'uuid';
 
 export const GET_ITEMS_REQUEST = "GET_ITEMS_REQUEST";
 export const GetItemsRequestStarted = () => {
@@ -36,9 +37,10 @@ export const AddItemRequestStarted = () => {
 };
 
 export const ADD_ITEM_SUCCESS = "ADD_ITEM_SUCCESS";
-export const AddItemSuccess = () => {
+export const AddItemSuccess = (item) => {
   return {
-    type: ADD_ITEM_SUCCESS
+    type: ADD_ITEM_SUCCESS,
+    item
   };
 };
 
@@ -60,7 +62,7 @@ export const uploadItemImgRequestStarted = () => {
 export const UPLOAD_ITEM_IMG_SUCCESS = "UPLOAD_ITEM_IMG_SUCCESS";
 export const uploadItemImgSuccess = () => {
   return {
-    type: ADD_ITEM_SUCCESS
+    type: UPLOAD_ITEM_IMG_SUCCESS
   };
 };
 
@@ -80,9 +82,10 @@ export const EditItemRequestStarted = () => {
 };
 
 export const EDIT_ITEM_SUCCESS = "EDIT_ITEM_SUCCESS";
-export const EditItemSuccess = () => {
+export const EditItemSuccess = (item) => {
   return {
-    type: EDIT_ITEM_SUCCESS
+    type: EDIT_ITEM_SUCCESS,
+    item
   };
 };
 
@@ -104,6 +107,7 @@ export const getItemsRequest = (restaurantId) => {
         dispatch(GetItemsSuccess({items: []}));
       } 
       const restaurantItems = snapshot.docs.map(doc => doc.data());
+      console.log(restaurantItems);
       dispatch(GetItemsSuccess({items: restaurantItems}));
     }).catch(err =>{
       dispatch(showErrorToast("Erro ao recuperar os items"));
@@ -112,7 +116,7 @@ export const getItemsRequest = (restaurantId) => {
   }
 }
 
-export const addItemRequest = (item, restaurant) => {
+export const addItemRequest = (item) => {
   return dispatch => {
     let newItem = {};
     let isEdit = false;
@@ -120,7 +124,7 @@ export const addItemRequest = (item, restaurant) => {
       newItem = { ...item };
       isEdit = true;
     } else {
-      newItem = { ...item, id: new Date().getTime() };
+      newItem = { ...item, id: uuidv4() };
     }
     const { img, id } = newItem;
     if (img && (img.startsWith("blob") || !item.id)) {
@@ -129,9 +133,8 @@ export const addItemRequest = (item, restaurant) => {
         const metadata = {
           contentType: "image/jpeg"
         };
-
         const uploadTask = storage
-          .ref(`${restaurant.uid}/${id}.jpeg`)
+          .ref(`${item.restaurant}/${id}.jpeg`)
           .put(blob, metadata);
         uploadTask.on(
           "state_changed",
@@ -139,22 +142,22 @@ export const addItemRequest = (item, restaurant) => {
           error => {
             dispatch(uploadItemImgFailure(error));
             if (isEdit) {
-              dispatch(editItem(newItem, restaurant));
+              dispatch(editItem(newItem));
             } else {
-              dispatch(createItem(newItem, restaurant));
+              dispatch(createItem(newItem));
             }
           },
           () => {
             storage
-              .ref(`${restaurant.uid}`)
+              .ref(`${item.restaurant}`)
               .child(`${id}.jpeg`)
               .getDownloadURL()
               .then(imgUrl => {
                 dispatch(uploadItemImgSuccess());
                 if (isEdit) {
-                  dispatch(editItem({ ...newItem, img: imgUrl }, restaurant));
+                  dispatch(editItem({ ...newItem, img: imgUrl }));
                 } else {
-                  dispatch(createItem({ ...newItem, img: imgUrl }, restaurant));
+                  dispatch(createItem({ ...newItem, img: imgUrl }));
                 }
               });
           }
@@ -162,88 +165,51 @@ export const addItemRequest = (item, restaurant) => {
       });
     } else {
       if (isEdit) {
-        dispatch(editItem(newItem, restaurant));
+        dispatch(editItem(newItem));
       } else {
-        dispatch(createItem(newItem, restaurant));
+        dispatch(createItem(newItem));
       }
     }
   };
 };
 
-const editItem = (editedItem, restaurant) => {
-  return dispatch => {
+const editItem = (editedItem) => {
+  return async dispatch => {
     dispatch(EditItemRequestStarted());
-
-    let { categories } = restaurant;
-    const categoryIndex = categories.findIndex(
-      category => category.id === editedItem.category
-    );
-    const { items } = categories[categoryIndex];
-    const itemIndex = items.findIndex(item => item.id === editedItem.id);
-    categories[categoryIndex].items[itemIndex] = editedItem;
-    const arrayOfCategories = JSON.parse(JSON.stringify(categories));
-    myFirebase
-      .firestore()
-      .collection("restaurants")
-      .doc(restaurant.uid)
-      .get()
-      .then(restaurantSnapshot => {
-        myFirebase
-          .firestore()
-          .collection("restaurants")
-          .doc(restaurantSnapshot.id)
-          .set(
-            {
-              categories: arrayOfCategories
-            },
-            { merge: true }
-          )
-          .then(() => {
-            dispatch(EditItemSuccess());
-            dispatch(getRestaurant(restaurantSnapshot.id));
-            dispatch(showSuccessToast("O item foi atualizado com sucesso"));
-          })
-          .catch(error => {
-            dispatch(showErrorToast("Erro ao editar o item"));
-            dispatch(EditItemFailure(error));
-          });
+    
+    try{
+      await myFirebase.firestore().collection("items").doc(editedItem.id).update({
+        name: editedItem.name,
+        category: editedItem.category,
+        description: editedItem.description,
+        price: editedItem.price, 
+        img: editedItem.img, 
+        isPaused: editedItem.isPaused, 
+        complements: editedItem.complements
       });
+      dispatch(EditItemSuccess(editedItem));
+      dispatch(showSuccessToast("O item foi atualizado com sucesso"));
+    }catch(error){
+      dispatch(showErrorToast("Erro ao editar o item"));
+      dispatch(EditItemFailure(error));
+    }
+
+
+      
   };
 };
 
-const createItem = (item, restaurant) => {
-  return dispatch => {
+const createItem = (item) => {
+  return async dispatch => {
     dispatch(AddItemRequestStarted());
-
-    let { categories } = restaurant;
-    const categoryIndex = categories.findIndex(
-      category => category.id === item.category
-    );
-    categories[categoryIndex].items.push(item);
-
-    myFirebase
-      .firestore()
-      .collection("restaurants")
-      .doc(restaurant.uid)
-      .get()
-      .then(restaurantSnapshot => {
-        myFirebase
-          .firestore()
-          .collection("restaurants")
-          .doc(restaurantSnapshot.id)
-          .update({
-            categories: categories
-          })
-          .then(() => {
-            dispatch(AddItemSuccess());
-            dispatch(getRestaurant(restaurantSnapshot.id));
-            dispatch(showSuccessToast("O item adicionado com sucesso"));
-          })
-          .catch(error => {
-            dispatch(showErrorToast("Erro ao criar o item"));
-            dispatch(AddItemFailure(error));
-          });
-      });
+    try{
+      await myFirebase.firestore().collection("items").doc(item.id).set(item);
+      dispatch(AddItemSuccess(item));
+      dispatch(showSuccessToast("O item foi adicionado com sucesso"));
+    } catch(err) {
+      dispatch(showErrorToast("Erro ao criar o item"));
+      dispatch(AddItemFailure(err));
+    }
   };
 };
 

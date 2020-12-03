@@ -53,7 +53,9 @@ export default (
         };
     case ADD_ITEM_SUCCESS:
         return{
-          ...state
+          ...state,
+          items: [...state.items, action.item],
+          loading: false
         };
     case ADD_ITEM_FAILURE:
       return{
@@ -68,7 +70,9 @@ export default (
         };
     case EDIT_ITEM_SUCCESS:
         return{
-          ...state
+          ...state,
+          items: state.items.map(item=> item.id === action.item.id ? action.item : item),
+          loading: false
         };
     case EDIT_ITEM_FAILURE:
       return{

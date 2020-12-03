@@ -44,7 +44,7 @@ const useStyles = makeStyles(theme => ({
 
 const RestaurantMenu = props => {
   const classes = useStyles();
-  const { restaurant, addOrEditCategory, loading, addOrEditItem, items, getItems } = props;
+  const { restaurant, addOrEditCategory, loading, itemLoading, addOrEditItem, items, getItems } = props;
   const [categoryDialogOpen, setCategoryDialogOpen] = useState(false);
   const [itemDialogOpen, setItemDialogOpen] = useState(false);
   const [isCategoryEdit, setIsCategoryEdit] = useState(false);
@@ -165,10 +165,10 @@ const RestaurantMenu = props => {
     }
   };
 
-  const categoryItems = useMemo( () => {
+  const categoryItems = useMemo(() => {
     if(restaurant.categories && restaurant.categories.length > 0){
       const categories = [...restaurant.categories];
-      return categories.map(category=>{
+      return categories.map(category=> {
       const filteredItems = items.filter(item =>{
         return item.category === category.id;
       }) 
@@ -181,7 +181,7 @@ const RestaurantMenu = props => {
 
   return (
     <div>
-      {loading && (
+      {(loading || itemLoading) && (
         <div className={classes.progressContainer}>
           <CircularProgress className={classes.circularProgress} size={100} />
         </div>
@@ -265,7 +265,8 @@ function mapStateToProps(state) {
   return {
     restaurant: state.restaurant.restaurant,
     loading: state.restaurant.loading,
-    items: state.item.items
+    items: state.item.items,
+    itemLoading: state.item.loading
   };
 }
 
