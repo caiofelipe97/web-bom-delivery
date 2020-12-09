@@ -1,7 +1,6 @@
 
 import { myFirebase, storage } from "../firebase/firebase";
 import { getFileBlob } from "../utils/utils";
-import { getRestaurant } from "./restaurant.actions";
 import { showSuccessToast, showErrorToast } from "./toast.actions";
 import { v4 as uuidv4 } from 'uuid';
 

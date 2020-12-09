@@ -115,7 +115,7 @@ const RestaurantMenu = props => {
   const handlePause = (
     type,
     categoryIndex,
-    itemIndex,
+    editedItem,
     complementIndex,
     optionIndex
   ) => {
@@ -140,13 +140,11 @@ const RestaurantMenu = props => {
         categoryIndex
       );
     } else if (type === MenuTypesEnum.item) {
-      let editedItem = { ...editedCategory.items[itemIndex] };
       if (editedItem) {
         editedItem.isPaused = !editedItem.isPaused;
-        addOrEditItem(editedItem, restaurant);
+        addOrEditItem(editedItem);
       }
     } else if (type === MenuTypesEnum.complement) {
-      let editedItem = { ...editedCategory.items[itemIndex] };
       if (editedItem) {
         editedItem.complements = editedItem.complements.map((complement, i) => {
           return i === complementIndex
@@ -160,7 +158,7 @@ const RestaurantMenu = props => {
               }
             : complement;
         });
-        addOrEditItem(editedItem, restaurant);
+        addOrEditItem(editedItem);
       }
     }
   };

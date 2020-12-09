@@ -134,7 +134,7 @@ const CategoryTable = (props) => {
                     </div>
                     </TableCell>
                     <TableCell className={classes.removeBottomBorder}>
-                        <PauseSalesButton   isPaused={item.isPaused}  setIsPaused={()=>{handlePause(2, index, itemIndex)}}/>
+                        <PauseSalesButton   isPaused={item.isPaused}  setIsPaused={()=>{handlePause(2, index, item)}}/>
                     </TableCell>
                     <TableCell className={classes.removeBottomBorder}>
                     <div className={classes.editDiv}>
@@ -200,7 +200,7 @@ const CategoryTable = (props) => {
                                             lastCellItemStyle
                                             :
                                             normalCellItemStyle}
-                                            ><PauseSalesButton small isPaused={option.isPaused} setIsPaused={()=>{handlePause(3, index, itemIndex, complementIndex,optionIndex)}}/></TableCell>
+                                            ><PauseSalesButton small isPaused={option.isPaused} setIsPaused={()=>{handlePause(3, index, item, complementIndex,optionIndex)}}/></TableCell>
                                             <TableCell className={[classes.invisibleCell, classes.removeBottomBorder, classes.complementCell].join(" ")}/>
                                         </TableRow>
                                         )
