@@ -103,6 +103,7 @@ export default (
     case DELETE_ITEM_SUCCESS:
       return {
         ...state,
+        items: state.items.filter(item=> item.id !== action.item.id),
         loading:false
       };
     case DELETE_ITEM_FAILURE:

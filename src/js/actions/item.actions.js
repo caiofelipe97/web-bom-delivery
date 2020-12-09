@@ -107,7 +107,6 @@ export const getItemsRequest = (restaurantId) => {
         dispatch(GetItemsSuccess({items: []}));
       } 
       const restaurantItems = snapshot.docs.map(doc => doc.data());
-      console.log(restaurantItems);
       dispatch(GetItemsSuccess({items: restaurantItems}));
     }).catch(err =>{
       dispatch(showErrorToast("Erro ao recuperar os items"));
@@ -221,9 +220,10 @@ export const DeleteItemRequestStarted = () => {
 };
 
 export const DELETE_ITEM_SUCCESS = "DELETE_ITEM_SUCCESS";
-export const DeleteItemSuccess = () => {
+export const DeleteItemSuccess = (item) => {
   return {
-    type: DELETE_ITEM_SUCCESS
+    type: DELETE_ITEM_SUCCESS,
+    item
   };
 };
 
@@ -235,54 +235,32 @@ export const DeleteItemFailure = error => {
   };
 };
 
-export const deleteItemRequest = (item, restaurant) => {
-  return dispatch => {
+export const deleteItemRequest = (item) => {
+  return async dispatch => {
     dispatch(DeleteItemRequestStarted());
-    let { categories } = restaurant;
-    const categoryIndex = categories.findIndex(
-      category => category.id === item.category
-    );
-    const itemIndex = categories[categoryIndex].items.findIndex(
-      el => el.id === item.id
-    );
-    categories[categoryIndex].items.splice(itemIndex, 1);
-
-    myFirebase
+    try{
+      await myFirebase
       .firestore()
-      .collection("restaurants")
-      .doc(restaurant.uid)
-      .get()
-      .then(restaurantSnapshot => {
-        myFirebase
-          .firestore()
-          .collection("restaurants")
-          .doc(restaurantSnapshot.id)
-          .update({
-            categories: categories
-          })
-          .then(() => {
-            if (item.img) {
-              let imgRef = storage
-                .ref(`${restaurant.uid}`)
-                .child(`${item.id}.jpeg`);
-              imgRef.delete().then(
-                () => {
-                  console.log("Imagem deletada com sucesso");
-                },
-                () => {
-                  console.log("Erro ao deletar item");
-                }
-              );
-            }
-            dispatch(AddItemSuccess());
-
-            dispatch(getRestaurant(restaurantSnapshot.id));
-            dispatch(showSuccessToast("O item foi deletado com sucesso"));
-          })
-          .catch(error => {
-            dispatch(AddItemFailure(error));
-            dispatch(showErrorToast("Erro ao deletar o item"));
-          });
-      });
+      .collection("items")
+      .doc(item.id).delete();
+      dispatch(DeleteItemSuccess(item));
+      dispatch(showSuccessToast("O item foi deletado com sucesso"));
+      if (item.img) {
+        let imgRef = storage
+          .ref(`${item.restaurant}`)
+          .child(`${item.id}.jpeg`);
+        imgRef.delete().then(
+          () => {
+            console.log("Imagem deletada com sucesso");
+          },
+          () => {
+            console.log("Erro ao deletar item");
+          }
+        );
+      }
+    } catch(err){
+      dispatch(DeleteItemFailure(err));
+      dispatch(showErrorToast("Erro ao deletar o item"));
+    }
   };
 };
