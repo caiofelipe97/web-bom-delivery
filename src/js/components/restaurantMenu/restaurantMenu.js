@@ -109,7 +109,7 @@ const RestaurantMenu = props => {
 
   const handleDuplicateItem = item => {
     const duplicatedItem = { ...item, id: 0 };
-    addOrEditItem(duplicatedItem, restaurant);
+    addOrEditItem(duplicatedItem);
   };
 
   const handlePause = (
