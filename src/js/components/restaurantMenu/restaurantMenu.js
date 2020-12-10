@@ -1,11 +1,12 @@
 import React, { useState, useEffect, useMemo } from "react";
 import PageTitle from "../common/PageTitle";
 import PageSubtitle from "../common/PageSubtitle";
-import { Divider, Button, CircularProgress, Dialog } from "@material-ui/core";
+import { Divider, Button, CircularProgress, Dialog, Link } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
 import AddIcon from "@material-ui/icons/Add";
 import CategoryDialog from "./CategoryDialog";
 import CategoryTable from "./CategoryTable";
+import OrderingCatalogDialog from './OrderingCatalogDialog';
 import { connect } from "react-redux";
 import {
   addOrEditCategory,
@@ -39,7 +40,13 @@ const useStyles = makeStyles(theme => ({
     [theme.breakpoints.down("sm")]: {
       marginLeft: 0
     }
-  }
+  },
+  linkStyle:{
+    cursor:'pointer',
+    fontWeight: 600,
+    alignSelf: 'center',
+    marginRight: 10
+},
 }));
 
 const RestaurantMenu = props => {
@@ -67,6 +74,8 @@ const RestaurantMenu = props => {
     complements: []
   });
 
+  const [orderingCategoriesDialogOpen, setOrderingCategoriesDialogOpen] = useState(false);
+
   useEffect(()=>{
     if(restaurant.uid){
       getItems(restaurant.uid);
@@ -78,6 +87,10 @@ const RestaurantMenu = props => {
     setCategory({ name: "", items: [], isPaused: false });
     setCategoryIndex(-1);
   };
+
+  const handleOrderingCatalogDialogClose = () =>{
+    setOrderingCategoriesDialogOpen(false);
+  }
 
   const handleItemDialogClose = () => {
     setItemDialogOpen(false);
@@ -191,7 +204,7 @@ const RestaurantMenu = props => {
         }
       />
       <Divider className={classes.dividerStyle} />
-      <div>
+      <div style={{display: 'flex', justifyContent: 'space-between'}}>
         <Button
           variant="contained"
           component="label"
@@ -201,6 +214,8 @@ const RestaurantMenu = props => {
         >
           Adicionar Categoria
         </Button>
+        <Link className={classes.linkStyle} onClick={()=>{setOrderingCategoriesDialogOpen(true)}} color="primary" underline="always">Reordenar cardápio</Link>
+
       </div>
       <div className={classes.tablesDiv}>
         { categoryItems &&
@@ -227,6 +242,7 @@ const RestaurantMenu = props => {
         category={category}
         setCategory={setCategory}
       />
+      <OrderingCatalogDialog loading={loading} dialogOpen={orderingCategoriesDialogOpen} handleOrderingCatalogDialogClose={handleOrderingCatalogDialogClose} categories={categoryItems}/>
       <Dialog
         open={itemDialogOpen}
         onClose={handleItemDialogClose}
