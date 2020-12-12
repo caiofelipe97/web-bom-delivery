@@ -3,6 +3,7 @@ import { myFirebase, storage } from "../firebase/firebase";
 import { getFileBlob } from "../utils/utils";
 import { showSuccessToast, showErrorToast } from "./toast.actions";
 import { v4 as uuidv4 } from 'uuid';
+import { getRestaurant } from "./restaurant.actions";
 
 export const GET_ITEMS_REQUEST = "GET_ITEMS_REQUEST";
 export const GetItemsRequestStarted = () => {
@@ -114,7 +115,7 @@ export const getItemsRequest = (restaurantId) => {
   }
 }
 
-export const addItemRequest = (item) => {
+export const addItemRequest = (item, restaurant) => {
   return dispatch => {
     let newItem = {};
     let isEdit = false;
@@ -140,9 +141,9 @@ export const addItemRequest = (item) => {
           error => {
             dispatch(uploadItemImgFailure(error));
             if (isEdit) {
-              dispatch(editItem(newItem));
+              dispatch(editItem(newItem, restaurant));
             } else {
-              dispatch(createItem(newItem));
+              dispatch(createItem(newItem, restaurant));
             }
           },
           () => {
@@ -153,9 +154,9 @@ export const addItemRequest = (item) => {
               .then(imgUrl => {
                 dispatch(uploadItemImgSuccess());
                 if (isEdit) {
-                  dispatch(editItem({ ...newItem, img: imgUrl }));
+                  dispatch(editItem({ ...newItem, img: imgUrl }, restaurant));
                 } else {
-                  dispatch(createItem({ ...newItem, img: imgUrl }));
+                  dispatch(createItem({ ...newItem, img: imgUrl }, restaurant));
                 }
               });
           }
@@ -163,31 +164,76 @@ export const addItemRequest = (item) => {
       });
     } else {
       if (isEdit) {
-        dispatch(editItem(newItem));
+        dispatch(editItem(newItem, restaurant));
       } else {
-        dispatch(createItem(newItem));
+        dispatch(createItem(newItem, restaurant));
       }
     }
   };
 };
 
-const editItem = (editedItem) => {
+const editItem = (editedItem, restaurant) => {
   return async dispatch => {
     dispatch(EditItemRequestStarted());
     
     try{
-      await myFirebase.firestore().collection("items").doc(editedItem.id).update({
-        name: editedItem.name,
-        category: editedItem.category,
-        description: editedItem.description,
-        price: editedItem.price, 
-        img: editedItem.img, 
-        isPaused: editedItem.isPaused, 
-        complements: editedItem.complements
-      });
-      dispatch(EditItemSuccess(editedItem));
+      const categories =  restaurant.categories ? restaurant.categories : [];
+      const categoryIndex = categories.findIndex(category => category.id === editedItem.category);
+      if (categoryIndex < 0) {
+        throw Error("Categoria do item não encontrada");
+      }
+      let updatedCategory = {...categories[categoryIndex]};
+      const itemIndex = updatedCategory.items ? updatedCategory.items.findIndex(categoryItem => categoryItem === editedItem.id) : -1;
+      
+      if(itemIndex < 0) {
+        const removedCategoryIndex = categories.findIndex(category => category.items ? (category.items.findIndex(item => item === editedItem.id) >= 0) : false)
+        let removedCategory =  categories[removedCategoryIndex];
+        removedCategory.items = removedCategory?.items.filter(item => item !== editedItem.id);
+
+        if(updatedCategory.items)
+          updatedCategory.items.push(editedItem.id);
+        else {
+          updatedCategory.items = [];
+          updatedCategory.items.push(editedItem.id);
+        }
+        if(categoryIndex) categories[categoryIndex] = updatedCategory;   
+        if(removedCategoryIndex) categories[removedCategoryIndex] = removedCategory;
+    
+        const promise1 = myFirebase
+        .firestore()
+        .collection("restaurants")
+        .doc(restaurant.uid)
+        .update({
+          categories: categories
+        })
+        const promise2= myFirebase.firestore().collection("items").doc(editedItem.id).update({
+          name: editedItem.name,
+          category: editedItem.category,
+          description: editedItem.description,
+          price: editedItem.price, 
+          img: editedItem.img, 
+          isPaused: editedItem.isPaused, 
+          complements: editedItem.complements
+        });
+        await Promise.all([promise1, promise2]);
+        dispatch(EditItemSuccess(editedItem));
+        dispatch(getRestaurant(restaurant.uid));
+      } else {
+        await myFirebase.firestore().collection("items").doc(editedItem.id).update({
+          name: editedItem.name,
+          description: editedItem.description,
+          price: editedItem.price, 
+          img: editedItem.img, 
+          isPaused: editedItem.isPaused, 
+          complements: editedItem.complements
+        })
+        dispatch(EditItemSuccess(editedItem));
+      }
+      
       dispatch(showSuccessToast("O item foi atualizado com sucesso"));
+      
     }catch(error){
+      console.log(error)
       dispatch(showErrorToast("Erro ao editar o item"));
       dispatch(EditItemFailure(error));
     }
@@ -197,14 +243,36 @@ const editItem = (editedItem) => {
   };
 };
 
-const createItem = (item) => {
+const createItem = (item, restaurant) => {
   return async dispatch => {
     dispatch(AddItemRequestStarted());
     try{
-      await myFirebase.firestore().collection("items").doc(item.id).set(item);
+      const categories =  restaurant.categories ? restaurant.categories : [];
+      const categoryIndex = categories.findIndex(category => category.id === item.category);
+      if (categoryIndex < 0) {
+        throw Error("Categoria do item não encontrada");
+      }
+      let updatedCategory = categories[categoryIndex];
+      if(updatedCategory.items){
+        updatedCategory.items.push(item.id);
+      } else{
+        updatedCategory.items = [];
+        updatedCategory.items.push(item.id);
+    }
+      categories[categoryIndex] = updatedCategory;
+      const promise1 = myFirebase
+      .firestore()
+      .collection("restaurants")
+      .doc(restaurant.uid)
+      .update({
+        categories: categories
+      })
+      const promise2 = myFirebase.firestore().collection("items").doc(item.id).set(item);
+      await Promise.all([promise1, promise2]);
       dispatch(AddItemSuccess(item));
       dispatch(showSuccessToast("O item foi adicionado com sucesso"));
     } catch(err) {
+      console.log(err);
       dispatch(showErrorToast("Erro ao criar o item"));
       dispatch(AddItemFailure(err));
     }
@@ -234,16 +302,35 @@ export const DeleteItemFailure = error => {
   };
 };
 
-export const deleteItemRequest = (item) => {
+export const deleteItemRequest = (item, restaurant) => {
   return async dispatch => {
     dispatch(DeleteItemRequestStarted());
     try{
-      await myFirebase
-      .firestore()
-      .collection("items")
-      .doc(item.id).delete();
+      const categories =  restaurant.categories ? restaurant.categories : [];
+      const categoryIndex = categories.findIndex(category => category.id === item.category);
+      if (categoryIndex < 0) {
+        throw Error("Categoria do item não encontrada");
+      }
+      let updatedCategory = categories[categoryIndex];
+      updatedCategory.items = updatedCategory.items.filter(categoryItem => categoryItem !== item.id);
+      categories[categoryIndex] = updatedCategory;
+      const promise1 = myFirebase
+        .firestore()
+        .collection("restaurants")
+        .doc(restaurant.uid)
+        .update({
+          categories: categories
+      })
+      const promise2 = myFirebase
+        .firestore()
+        .collection("items")
+        .doc(item.id).delete();
+      await Promise.all([promise1, promise2]);
+
       dispatch(DeleteItemSuccess(item));
+      dispatch(getRestaurant(restaurant.uid));
       dispatch(showSuccessToast("O item foi deletado com sucesso"));
+        
       if (item.img) {
         let imgRef = storage
           .ref(`${item.restaurant}`)

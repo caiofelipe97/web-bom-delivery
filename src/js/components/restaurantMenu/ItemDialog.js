@@ -158,10 +158,10 @@ const ItemDialog = (props) => {
      
       if(!isEdit){
         const newItem = {name,category,description,price, img, isPaused, complements, restaurant: restaurant.uid, user: restaurant.user};
-        addItem(newItem);
+        addItem(newItem, restaurant);
       }else{
         const editedItem = {name, category, description, price, img, isPaused, complements, id, restaurant: restaurant.uid, user: restaurant.user};
-        addItem(editedItem);
+        addItem(editedItem, restaurant);
       }
       handleItemDialogClose();
      }
@@ -416,7 +416,7 @@ const ItemDialog = (props) => {
 }
 
 const mapDispatchToProps = dispatch => ({
-  addItem: ( item) => dispatch(addItemRequest( item)),
+  addItem: (item, restaurant) => dispatch(addItemRequest( item, restaurant)),
   deleteItem: ( item, restaurant) => dispatch(deleteItemRequest(item, restaurant))
 });
 

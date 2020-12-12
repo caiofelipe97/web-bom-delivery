@@ -122,7 +122,7 @@ const RestaurantMenu = props => {
 
   const handleDuplicateItem = item => {
     const duplicatedItem = { ...item, id: 0 };
-    addOrEditItem(duplicatedItem);
+    addOrEditItem(duplicatedItem, restaurant);
   };
 
   const handlePause = (
@@ -155,7 +155,7 @@ const RestaurantMenu = props => {
     } else if (type === MenuTypesEnum.item) {
       if (editedItem) {
         editedItem.isPaused = !editedItem.isPaused;
-        addOrEditItem(editedItem);
+        addOrEditItem(editedItem, restaurant);
       }
     } else if (type === MenuTypesEnum.complement) {
       if (editedItem) {
@@ -171,22 +171,25 @@ const RestaurantMenu = props => {
               }
             : complement;
         });
-        addOrEditItem(editedItem);
+        addOrEditItem(editedItem, restaurant);
       }
     }
   };
 
   const categoryItems = useMemo(() => {
-    if(restaurant.categories && restaurant.categories.length > 0){
+    if(restaurant.categories && restaurant.categories.length > 0 && items.length > 0){
       const categories = [...restaurant.categories];
       return categories.map(category=> {
-      const filteredItems = items.filter(item =>{
-        return item.category === category.id;
-      }) 
-      return {...category, items: filteredItems};
+        let sortedItems = category.items?.map(categoryItem => {
+          return items.find(item => item.id === categoryItem)
+        })
+        sortedItems = sortedItems ? sortedItems.filter(sortedItem => !!sortedItem) : []
+        return {...category, items: sortedItems};
     })
+    } else if (restaurant.categories && restaurant.categories.length > 0) {
+      return [...restaurant.categories];
     } else {
-      return [];
+      return []
     }
   },[items, restaurant.categories])
 

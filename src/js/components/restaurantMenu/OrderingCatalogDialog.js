@@ -16,8 +16,8 @@ const OrderingCatalogDialog = (props) => {
     const {dialogOpen, handleOrderingCatalogDialogClose, loading, categories} = props;
     const classes = useStyles();
 
+    console.log(categories);
     
-
     return(
     <Dialog
           open={dialogOpen}

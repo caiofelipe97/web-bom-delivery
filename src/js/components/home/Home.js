@@ -163,9 +163,7 @@ const Home = props => {
                   location.pathname === el.route ? classes.activeIcon : ""
                 }
               >
-                {index === 0 && <AssessmentIcon />}
-                {index === 1 && <AccountBoxIcon />}
-                {index === 2 && <MenuBookIcon />}
+                {index === 0 ? <AssessmentIcon /> : index === 1 ? <AccountBoxIcon /> : index === 2 ? <MenuBookIcon /> : null}
               </ListItemIcon>
               <ListItemText
                 disableTypography

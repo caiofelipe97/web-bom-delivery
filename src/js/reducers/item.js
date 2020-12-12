@@ -71,7 +71,7 @@ export default (
     case EDIT_ITEM_SUCCESS:
         return{
           ...state,
-          items: state.items.map(item=> item.id === action.item.id ? action.item : item),
+          items: state.items.map(item => item.id === action.item.id ? action.item : item),
           loading: false
         };
     case EDIT_ITEM_FAILURE:
