@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, {useEffect, useState, useCallback} from 'react';
 import { DialogContent, Dialog,DialogTitle, DialogActions, Button, Typography, List, ListItem, ListItemIcon, ListItemText, Box } from '@material-ui/core';
 import DragIndicatorIcon from '@material-ui/icons/DragIndicator';
 import { makeStyles} from '@material-ui/core/styles';
@@ -19,8 +19,50 @@ const useStyles = makeStyles( (theme) => ({
       display: 'flex'
     },
     MenuList: {
-      maxHeight: '300px',
-      overflow: 'auto'
+      height: '300px',
+      overflow: 'auto',
+      paddingTop: '0px'
+    },
+    FirstList: {
+      borderTop: '1px solid #e3e3e3',
+      borderRight: '1px solid #e3e3e3',
+    },
+    MiddleList: {
+      borderTop: '1px solid #e3e3e3',
+      borderRight: '1px solid #e3e3e3',
+      borderLeft: '1px solid #e3e3e3'
+    },
+    LastList: {
+      borderTop: '1px solid #e3e3e3',
+      borderLeft: '1px solid #e3e3e3'
+    },
+    CardIcon: {
+      minWidth: '28px'
+    },
+    CardItem: {
+      paddingRight: '4px',
+      paddingLeft:  '4px',
+      cursor: 'pointer'
+    },
+    SelectedCardItem: {
+      backgroundColor: '#F6F2F8',
+      paddingRight: '4px',
+      paddingLeft:  '4px',
+      cursor: 'pointer'
+
+    },
+    CardText: {
+      fontFamily: 'Roboto',
+      fontSize: '16px',
+      lineHeight: 1.5,
+      fontWeight: 400,
+    },
+    SelectedCardText: {
+      fontFamily: 'Roboto',
+      fontSize: '16px',
+      lineHeight: 1.5,
+      fontWeight: 'bold',
+      color: '#78308C'
     }
 }))
 
@@ -55,8 +97,63 @@ const OrderingCatalogDialog = (props) => {
         }
       }
     },[categories])
-    console.log(categories);    
     
+    const handleSelectCategory = useCallback((category)=>{
+      setSelectedCategory(category);
+        if(category.items?.length > 0) {
+          setItems(category.items);
+          const firstItem = category.items[0];
+          setSelectedItem(firstItem);
+          if(firstItem.complements?.length > 0) {
+            setComplements(firstItem.complements);
+            const firstComplement = firstItem.complements[0];
+            setSelectedComplement(firstComplement);
+            if(firstComplement.options?.length > 0) {
+              setComplementOptions(firstComplement.options);
+            } else {
+              setComplementOptions([]);
+            }
+          } else {
+            setComplements([]);
+            setSelectedComplement(null);
+            setComplementOptions([]);
+          }
+        } else {
+          setItems([]);
+          setSelectedItem(null);
+          setComplements([]);
+          setSelectedComplement(null);
+          setComplementOptions([]);
+        }
+    }, []);
+
+    const handleSelectItem = useCallback((item)=>{
+      setSelectedItem(item);
+      if(item.complements?.length > 0) {
+        setComplements(item.complements);
+        const firstComplement = item.complements[0];
+        setSelectedComplement(firstComplement);
+        if(firstComplement.options?.length > 0) {
+          setComplementOptions(firstComplement.options);
+        } else {
+          setComplementOptions([])
+        }
+      } else {
+        setComplements([]);
+        setSelectedComplement(null);
+        setComplementOptions([]);
+      }
+    }, []);
+
+    const handleSelectComplement = useCallback((complement)=>{
+        setSelectedComplement(complement);
+        if(complement.options?.length > 0) {
+          setComplementOptions(complement.options);
+        } else {
+          setComplementOptions([])
+        }
+    }, []);
+
     return(
       <Dialog
           open={dialogOpen}
@@ -74,13 +171,13 @@ const OrderingCatalogDialog = (props) => {
                 <Box fontFamily="Roboto" fontWeight="fontWeightMedium" m={1}>
                   Categorias
                 </Box>
-                <List className={classes.MenuList}>
+                <List className={[classes.MenuList, classes.FirstList]}>
                 {categories && categories.map((category, index) =>
-                  <ListItem>
-                    <ListItemIcon>
+                  <ListItem onClick={()=>{handleSelectCategory(category)}} className={selectedCategory.id === category.id ? classes.SelectedCardItem : classes.CardItem}>
+                  <ListItemIcon className={classes.CardIcon}>
                       <DragIndicatorIcon/>
                     </ListItemIcon>
-                    <ListItemText primary={category.name}/>
+                    <ListItemText disableTypography className={selectedCategory.id === category.id ? classes.SelectedCardText : classes.CardText} primary={category.name}/>
                   </ListItem>
                 )}
                 </List>
@@ -89,13 +186,13 @@ const OrderingCatalogDialog = (props) => {
                 <Box fontFamily="Roboto" fontWeight="fontWeightMedium" m={1}>
                   Itens
                 </Box>
-                <List className={classes.MenuList}>
+                <List className={[classes.MenuList, classes.MiddleList]}>
                   {items.map(item =>(
-                    <ListItem>
-                    <ListItemIcon>
+                    <ListItem onClick={()=>{handleSelectItem(item)}} className={selectedItem.id === item.id ? classes.SelectedCardItem : classes.CardItem}>
+                    <ListItemIcon className={classes.CardIcon}>
                       <DragIndicatorIcon/>
                     </ListItemIcon>
-                    <ListItemText primary={item.name}/>
+                    <ListItemText disableTypography className={selectedItem.id === item.id ? classes.SelectedCardText : classes.CardText} primary={item.name}/>
                   </ListItem>
                   ))}
                 </List>
@@ -104,13 +201,13 @@ const OrderingCatalogDialog = (props) => {
                 <Box fontFamily="Roboto" fontWeight="fontWeightMedium" m={1}>
                   Categorias de complementos
                 </Box>
-                <List className={classes.MenuList}>
+                <List className={[classes.MenuList, classes.MiddleList]}>
                   {complements.map((complement, index) => (
-                    <ListItem>
-                      <ListItemIcon>
+                    <ListItem onClick={()=>{handleSelectComplement(complement)}} className={selectedComplement.name === complement.name ? classes.SelectedCardItem : classes.CardItem}>
+                      <ListItemIcon className={classes.CardIcon}>
                         <DragIndicatorIcon/>
                       </ListItemIcon>
-                      <ListItemText primary={complement.name}/>
+                      <ListItemText disableTypography className={selectedComplement.name === complement.name ? classes.SelectedCardText : classes.CardText} primary={complement.name}/>
                     </ListItem>
                   ))}
                 </List>
@@ -119,10 +216,10 @@ const OrderingCatalogDialog = (props) => {
                 <Box fontFamily="Roboto" fontWeight="fontWeightMedium" m={1}>
                   Complementos
                 </Box>
-                <List className={classes.MenuList}>
+                <List className={[classes.MenuList, classes.LastList]}>
                   {complementOptions.map((complementOption, index) =>  (
-                    <ListItem>
-                      <ListItemIcon >
+                    <ListItem className={classes.CardItem}>
+                    <ListItemIcon className={classes.CardIcon}>
                         <DragIndicatorIcon/>
                       </ListItemIcon>
                       <ListItemText primary={complementOption.name}/>
