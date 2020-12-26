@@ -245,7 +245,7 @@ const RestaurantMenu = props => {
         category={category}
         setCategory={setCategory}
       />
-      <OrderingCatalogDialog loading={loading} dialogOpen={orderingCategoriesDialogOpen} handleOrderingCatalogDialogClose={handleOrderingCatalogDialogClose} categories={categoryItems}/>
+      <OrderingCatalogDialog loading={loading} dialogOpen={orderingCategoriesDialogOpen} handleOrderingCatalogDialogClose={handleOrderingCatalogDialogClose} restaurantCategories={categoryItems}/>
       <Dialog
         open={itemDialogOpen}
         onClose={handleItemDialogClose}
