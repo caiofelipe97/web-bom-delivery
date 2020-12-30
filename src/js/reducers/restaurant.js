@@ -11,6 +11,9 @@ import {
     ADD_OR_EDIT_CATEGORY_REQUEST,
     ADD_OR_EDIT_CATEGORY_SUCCESS,
     ADD_OR_EDIT_CATEGORY_FAILURE,
+    SORT_RESTAURANT_MENU_REQUEST,
+    SORT_RESTAURANT_MENU_SUCCESS,
+    SORT_RESTAURANT_MENU_FAILURE
   } from "../actions/";
 
 
@@ -88,6 +91,22 @@ export default (
           loading:false,
           errorMessage: action.error
         };
+      case SORT_RESTAURANT_MENU_REQUEST:
+        return {
+          ...state,
+          loading: true,
+        }
+      case SORT_RESTAURANT_MENU_SUCCESS:
+        return {
+          ...state,
+          loading: false,
+        }
+      case SORT_RESTAURANT_MENU_FAILURE:
+        return {
+          ...state,
+          loading: false,
+          errorMessage: action.error
+        }
   default:
           return state;
       }

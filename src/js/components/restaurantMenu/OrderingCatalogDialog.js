@@ -16,6 +16,10 @@ import {
 import DragIndicatorIcon from '@material-ui/icons/DragIndicator';
 import { makeStyles } from '@material-ui/core/styles';
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
+import { connect } from "react-redux";
+import {
+  sortRestaurantMenu
+} from "../../actions";
 
 const useStyles = makeStyles((theme) => ({
   ButtonStyle: {
@@ -82,10 +86,12 @@ const useStyles = makeStyles((theme) => ({
 
 const OrderingCatalogDialog = (props) => {
   const {
+    restaurantId,
     dialogOpen,
     handleOrderingCatalogDialogClose,
     loading,
     restaurantCategories,
+    sortMenu
   } = props;
   const classes = useStyles();
 
@@ -96,6 +102,9 @@ const OrderingCatalogDialog = (props) => {
   const [items, setItems] = useState([]);
   const [complements, setComplements] = useState([]);
   const [complementOptions, setComplementOptions] = useState([]);
+
+  const [isCategoriesChanged, setIsCategoryChanged] = useState(false);
+  const [itemsToUpdate, setItemsToUpdate] = useState([]);
 
   useEffect(() => {
     if (restaurantCategories?.length > 0) {
@@ -112,11 +121,20 @@ const OrderingCatalogDialog = (props) => {
           setSelectedComplement(firstComplement);
           if (firstComplement.options?.length > 0) {
             setComplementOptions(firstComplement.options);
+          } else {
+            setComplementOptions([]);
           }
+        } else {
+          setComplements([]);
+          setComplementOptions([]);
         }
+      } else {
+        setItems([]);
+        setComplements([]);
+        setComplementOptions([]);
       }
     }
-  }, [restaurantCategories]);
+  }, [restaurantCategories, dialogOpen]);
 
   const handleSelectCategory = useCallback((category) => {
     setSelectedCategory(category);
@@ -194,6 +212,7 @@ const OrderingCatalogDialog = (props) => {
         result.source.index,
         result.destination.index
       );
+      setIsCategoryChanged(true);
       setCategories(sortedCategories);
     },
     [categories, reorder]
@@ -218,6 +237,7 @@ const OrderingCatalogDialog = (props) => {
         category.id === selectedCategory.id ? updatedCategory : category
       );
 
+      setIsCategoryChanged(true);
       setCategories(updatedCategories);
       setSelectedCategory(updatedCategory);
       setItems(sortedItems);
@@ -251,13 +271,21 @@ const OrderingCatalogDialog = (props) => {
         category.id === selectedCategory.id ? updatedCategory : category
       );
 
+      let updatedItemsToUpdate = [];
+      if(itemsToUpdate.findIndex(item => item.id === updatedItem.id) > -1){
+        updatedItemsToUpdate = itemsToUpdate.map(item => item.id === updatedItem.id ? updatedItem : item);
+      } else {
+        updatedItemsToUpdate = [...itemsToUpdate, updatedItem];
+      }
       setCategories(updatedCategories);
       setSelectedCategory(updatedCategory);
       setItems(updatedItems);
       setSelectedItem(updatedItem);
       setComplements(sortedComplementCategories);
+      setItemsToUpdate(updatedItemsToUpdate)
+
     },
-    [categories, reorder, selectedCategory, selectedItem]
+    [categories, itemsToUpdate, reorder, selectedCategory, selectedItem]
   );
 
   const onDragComplementOptionsEnd = useCallback(
@@ -290,6 +318,13 @@ const OrderingCatalogDialog = (props) => {
         category.id === selectedCategory.id ? updatedCategory : category
       );
 
+      let updatedItemsToUpdate = [];
+      if(itemsToUpdate.findIndex(item => item.id === updatedItem.id) > -1){
+        updatedItemsToUpdate = itemsToUpdate.map(item => item.id === updatedItem.id ? updatedItem : item);
+      } else {
+        updatedItemsToUpdate = [...itemsToUpdate, updatedItem];
+      }
+
       setCategories(updatedCategories);
       setSelectedCategory(updatedCategory);
       setItems(updatedItems);
@@ -297,8 +332,25 @@ const OrderingCatalogDialog = (props) => {
       setComplements(updatedComplements);
       setSelectedComplement(updatedComplement);
       setComplementOptions(sortedComplementOptions);
+      setItemsToUpdate(updatedItemsToUpdate)
     },
-    [categories, reorder, selectedCategory, selectedComplement, selectedItem]
+    [categories, itemsToUpdate, reorder, selectedCategory, selectedComplement, selectedItem]
+  );
+
+  const handleOnSubmit = useCallback(
+    () => {
+      if(isCategoriesChanged){
+        const updatedCategories = categories.map(category => {
+          const categoryItems = category.items ? category.items.map(item => item.id) : [];
+          return {...category, items: categoryItems};
+        })
+        sortMenu(restaurantId, updatedCategories, itemsToUpdate);
+      } else {
+        sortMenu(restaurantId, null, itemsToUpdate);
+      }
+      handleOrderingCatalogDialogClose();
+    },
+    [isCategoriesChanged, handleOrderingCatalogDialogClose, categories, sortMenu, restaurantId, itemsToUpdate]
   );
 
   return (
@@ -551,9 +603,7 @@ const OrderingCatalogDialog = (props) => {
         <Button
           disabled={loading}
           className={classes.ButtonStyle}
-          onClick={() => {
-            handleOrderingCatalogDialogClose();
-          }}
+          onClick={handleOnSubmit}
           variant="contained"
           color="primary"
         >
@@ -575,4 +625,15 @@ const OrderingCatalogDialog = (props) => {
   );
 };
 
-export default OrderingCatalogDialog;
+const mapDispatchToProps = dispatch => ({
+  sortMenu: (resturantId, categories, itemsToUpdate) => dispatch(sortRestaurantMenu( resturantId, categories, itemsToUpdate))
+});
+
+function mapStateToProps(state) {
+    return {
+      restaurant: state.restaurant.restaurant,
+      loading: state.restaurant.loading
+    };
+}
+
+export default connect(mapStateToProps,mapDispatchToProps)(OrderingCatalogDialog);
