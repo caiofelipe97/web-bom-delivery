@@ -22,7 +22,7 @@ import PauseSalesButton from './PauseSalesButton';
 import ItemImageDialogContent from './ItemImageDialogContent';
 import AddAPhotoIcon from '@material-ui/icons/AddAPhoto';
 import { connect } from "react-redux";
-import {addItemRequest, deleteItemRequest} from "../../actions/restaurant.actions";
+import {addItemRequest, deleteItemRequest}  from "../../actions";
 import ItemComplementContent from './ItemComplementContent';
 import DeleteItemDivButton from './DeleteItemDivButton';
 
@@ -157,10 +157,10 @@ const ItemDialog = (props) => {
     const handleItemSave = () =>{
      
       if(!isEdit){
-        const newItem = {name,category,description,price, img, isPaused, complements};
+        const newItem = {name,category,description,price, img, isPaused, complements, restaurant: restaurant.uid, user: restaurant.user};
         addItem(newItem, restaurant);
       }else{
-        const editedItem = {name, category, description, price, img, isPaused, complements, id};
+        const editedItem = {name, category, description, price, img, isPaused, complements, id, restaurant: restaurant.uid, user: restaurant.user};
         addItem(editedItem, restaurant);
       }
       handleItemDialogClose();
@@ -416,7 +416,7 @@ const ItemDialog = (props) => {
 }
 
 const mapDispatchToProps = dispatch => ({
-  addItem: ( item, restaurant) => dispatch(addItemRequest( item, restaurant)),
+  addItem: (item, restaurant) => dispatch(addItemRequest( item, restaurant)),
   deleteItem: ( item, restaurant) => dispatch(deleteItemRequest(item, restaurant))
 });
 

@@ -97,7 +97,7 @@ const ItemComplementContent = (props) => {
     }
 
     const handleAddComplement = (newComplement) =>{
-        setComplements([...complements,newComplement])
+        setComplements([...complements,{...newComplement, id: new Date().getTime()} ])
         handleComplementDialogClose();
     }
 
@@ -109,7 +109,7 @@ const ItemComplementContent = (props) => {
 
     const handleAddOption = (categoryIndex) =>{
         let newComplementsArray = complements.map((complement,i)=>{ 
-            let newOption = {name: "", description:"", price:0, isPaused:false};
+            let newOption = {name: "", description:"", price:0, isPaused:false, id: new Date().getTime()};
             return i === categoryIndex ? 
             { ...complement,options:[...complement.options,newOption]} 
             : complement});

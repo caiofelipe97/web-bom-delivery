@@ -1,43 +1,64 @@
-import React from 'react';
-import {TextField, FormControl} from '@material-ui/core';
-import Autocomplete from '@material-ui/lab/Autocomplete';
-import {STATES_ENUM, CITIES_ENUM } from '../../utils/constants';
-import OutlinedDiv from '../common/OutlinedDiv';
-import { makeStyles} from '@material-ui/core/styles';
+import React from "react";
+import { TextField, FormControl } from "@material-ui/core";
+import Autocomplete from "@material-ui/lab/Autocomplete";
+import { STATES_ENUM, CITIES_ENUM } from "../../utils/constants";
+import OutlinedDiv from "../common/OutlinedDiv";
+import { makeStyles } from "@material-ui/core/styles";
 
 const useStyles = makeStyles(theme => ({
-  outlinedDiv:{
+  outlinedDiv: {
     marginTop: 20,
-    minWidth: 600,
-    maxWidth: 600
+    width: 600,
+    [theme.breakpoints.down("sm")]: {
+      width: "100%"
+    }
   },
-  restaurantDiv:{
-    display:'flex',
-    alignItems: 'center',
-    flexWrap: 'wrap'
+  cepDiv: {
+    display: "flex",
+    [theme.breakpoints.down("sm")]: {
+      flexDirection: "column",
+      minWidth: "90%"
+    }
   },
-  formControl:{
+  restaurantDiv: {
+    display: "flex",
+    alignItems: "center",
+    minWidth: "80%"
+  },
+  formControl: {
     margin: theme.spacing(1),
-    minWidth: '45%'
+    minWidth: "60%"
   },
-  smallFormControl:{
+  cityFormControl: {
     margin: theme.spacing(1),
-    minWidth: '30%',
-    maxWidth: '41%'
+    minWidth: "50%"
   },
-  tinyFormControl:{
+  smallFormControl: {
     margin: theme.spacing(1),
-    maxWidth:'25%',
-    minWidth: '15%'
+    minWidth: "40%"
   },
-}))
+  tinyFormControl: {
+    margin: theme.spacing(1),
+    minWidth: "20%"
+  }
+}));
 
-
-const AddressForm = (props) => {
+const AddressForm = props => {
   const classes = useStyles();
-  const {street, setStreet, complement, setComplement, CEP, setCEP, city, setCity, state, setState} = props;
+  const {
+    street,
+    setStreet,
+    complement,
+    setComplement,
+    CEP,
+    setCEP,
+    city,
+    setCity,
+    state,
+    setState
+  } = props;
 
-  return(
+  return (
     <OutlinedDiv label={"Endereço"} className={classes.outlinedDiv}>
       <div className={classes.restaurantDiv}>
         <FormControl className={classes.formControl}>
@@ -49,74 +70,91 @@ const AddressForm = (props) => {
             label="Rua"
             name="street"
             value={street}
-            inputProps={{maxLength: 40}}
+            inputProps={{ maxLength: 40 }}
             onChange={e => setStreet(e.target.value)}
           />
         </FormControl>
-        <FormControl className={classes.smallFormControl}>
+        <FormControl className={classes.tinyFormControl}>
           <TextField
             margin="normal"
             id="complement"
             label="Complemento"
             name="complement"
             value={complement}
-            inputProps={{maxLength: 10}}
+            inputProps={{ maxLength: 10 }}
             onChange={e => setComplement(e.target.value)}
           />
         </FormControl>
       </div>
-      <div className={classes.restaurantDiv}>
-        <FormControl className={classes.formControl}>
-          <TextField
-            margin="normal"
-            required
-            fullWidth
-            id="cep"
-            label="CEP"
-            name="cep"
-            value={CEP}
-            inputProps={{maxLength: 9}}
-            onChange={e => {
-              let cepString = e.target.value;
-              if(cepString.length === 6 && cepString.charAt(5) !== "-"){
-                let newCepString = "";
-                for(let i=0; i < cepString.length; i++){
-                    if(i===5){
-                      newCepString += "-" + cepString.charAt(i);     
-                    } else{
-                      newCepString += cepString.charAt(i);     
+      <div className={classes.cepDiv}>
+        <div className={classes.restaurantDiv}>
+          <FormControl className={classes.smallFormControl}>
+            <TextField
+              margin="normal"
+              required
+              fullWidth
+              id="cep"
+              label="CEP"
+              name="cep"
+              value={CEP}
+              inputProps={{ maxLength: 9 }}
+              onChange={e => {
+                let cepString = e.target.value;
+                if (cepString.length === 6 && cepString.charAt(5) !== "-") {
+                  let newCepString = "";
+                  for (let i = 0; i < cepString.length; i++) {
+                    if (i === 5) {
+                      newCepString += "-" + cepString.charAt(i);
+                    } else {
+                      newCepString += cepString.charAt(i);
                     }
                     setCEP(newCepString);
                   }
-              } else {
-                setCEP(cepString)
-              }
-            }}
-          />
-        </FormControl>
-        <FormControl className={classes.smallFormControl}>
-          <Autocomplete
-            options={CITIES_ENUM}
-            value={city}
+                } else {
+                  setCEP(cepString);
+                }
+              }}
+            />
+          </FormControl>
+          <FormControl className={classes.cityFormControl}>
+            <Autocomplete
+              options={CITIES_ENUM}
+              value={city}
               onChange={(_, newCity) => setCity(newCity)}
               renderInput={params => (
-            <TextField {...params} label="Cidade" margin="normal" name="city" id="city" fullWidth/>
+                <TextField
+                  {...params}
+                  label="Cidade"
+                  margin="normal"
+                  name="city"
+                  id="city"
+                  fullWidth
+                />
               )}
-          />
-        </FormControl>
-        <FormControl className={classes.tinyFormControl}>
-        <Autocomplete
-            options={STATES_ENUM}
-            value={state}
+            />
+          </FormControl>
+        </div>
+        <div>
+          <FormControl className={classes.tinyFormControl}>
+            <Autocomplete
+              options={STATES_ENUM}
+              value={state}
               onChange={(_, newState) => setState(newState)}
               renderInput={params => (
-            <TextField {...params} label="Estado" margin="normal" name="state" id="state"/>
+                <TextField
+                  {...params}
+                  label="Estado"
+                  margin="normal"
+                  name="state"
+                  id="state"
+                />
               )}
-          />
-        </FormControl>
+            />
+          </FormControl>
+        </div>
       </div>
-    </OutlinedDiv>  
-  )
-}
+    </OutlinedDiv>
+  );
+};
 
 export default AddressForm;

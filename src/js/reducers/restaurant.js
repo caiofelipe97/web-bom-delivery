@@ -11,18 +11,9 @@ import {
     ADD_OR_EDIT_CATEGORY_REQUEST,
     ADD_OR_EDIT_CATEGORY_SUCCESS,
     ADD_OR_EDIT_CATEGORY_FAILURE,
-    ADD_ITEM_REQUEST,
-    ADD_ITEM_SUCCESS,
-    ADD_ITEM_FAILURE,
-    UPLOAD_ITEM_IMG_REQUEST,
-    UPLOAD_ITEM_IMG_SUCCESS,
-    UPLOAD_ITEM_IMG_FAILURE,
-    EDIT_ITEM_REQUEST,
-    EDIT_ITEM_SUCCESS,
-    EDIT_ITEM_FAILURE,
-    DELETE_ITEM_REQUEST,
-    DELETE_ITEM_SUCCESS,
-    DELETE_ITEM_FAILURE
+    SORT_RESTAURANT_MENU_REQUEST,
+    SORT_RESTAURANT_MENU_SUCCESS,
+    SORT_RESTAURANT_MENU_FAILURE
   } from "../actions/";
 
 
@@ -100,65 +91,21 @@ export default (
           loading:false,
           errorMessage: action.error
         };
-      case ADD_ITEM_REQUEST:
-          return{
-            ...state,
-            loading: true
-          };
-      case ADD_ITEM_SUCCESS:
-          return{
-            ...state
-          };
-      case ADD_ITEM_FAILURE:
-        return{
+      case SORT_RESTAURANT_MENU_REQUEST:
+        return {
           ...state,
-          loading:false,
+          loading: true,
+        }
+      case SORT_RESTAURANT_MENU_SUCCESS:
+        return {
+          ...state,
+          loading: false,
+        }
+      case SORT_RESTAURANT_MENU_FAILURE:
+        return {
+          ...state,
+          loading: false,
           errorMessage: action.error
-        };
-        case EDIT_ITEM_REQUEST:
-          return{
-            ...state,
-            loading: true
-          };
-      case EDIT_ITEM_SUCCESS:
-          return{
-            ...state
-          };
-      case EDIT_ITEM_FAILURE:
-        return{
-          ...state,
-          loading:false,
-          errorMessage: action.error
-        };
-      case UPLOAD_ITEM_IMG_REQUEST:
-        return{
-          ...state,
-          loading:true
-        };
-      case UPLOAD_ITEM_IMG_SUCCESS:
-      return {
-        ...state,
-        uploadErrorMessage: ''
-      };
-      case UPLOAD_ITEM_IMG_FAILURE:
-        return {
-          ...state,
-          uploadErrorMessage: action.error
-        };
-      case DELETE_ITEM_REQUEST:
-        return {
-          ...state,
-          loading:true
-        };
-      case DELETE_ITEM_SUCCESS:
-        return {
-          ...state,
-          loading:false
-        };
-      case DELETE_ITEM_FAILURE:
-        return {
-          ...state,
-          loading:false
         }
   default:
           return state;

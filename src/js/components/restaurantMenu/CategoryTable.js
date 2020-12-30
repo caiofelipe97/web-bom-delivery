@@ -1,7 +1,6 @@
 import React, {useState} from 'react';
 import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Typography, Link, Collapse, IconButton} from '@material-ui/core';
 import { makeStyles} from '@material-ui/core/styles';
-
 import PauseSalesButton from './PauseSalesButton';
 import {formatMoney} from '../../utils/utils';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
@@ -135,13 +134,13 @@ const CategoryTable = (props) => {
                     </div>
                     </TableCell>
                     <TableCell className={classes.removeBottomBorder}>
-                        <PauseSalesButton   isPaused={item.isPaused}  setIsPaused={()=>{handlePause(2, index, itemIndex)}}/>
+                        <PauseSalesButton   isPaused={item.isPaused}  setIsPaused={()=>{handlePause(2, index, item)}}/>
                     </TableCell>
                     <TableCell className={classes.removeBottomBorder}>
                     <div className={classes.editDiv}>
                         <Link className={classes.linkStyle} onClick={()=>{handleDuplicateItem(item)}} color="primary" underline="always">Duplicar</Link>
 
-                        <Link className={classes.linkStyle} onClick={()=>{handleItemDialogOpen(category.id, true, item)}}color="primary" underline="always">Editar</Link>
+                        <Link className={classes.linkStyle} onClick={()=>{handleItemDialogOpen(category.id, true, item)}} color="primary" underline="always">Editar</Link>
 
                     </div>
                     
@@ -201,7 +200,7 @@ const CategoryTable = (props) => {
                                             lastCellItemStyle
                                             :
                                             normalCellItemStyle}
-                                            ><PauseSalesButton small isPaused={option.isPaused} setIsPaused={()=>{handlePause(3, index, itemIndex, complementIndex,optionIndex)}}/></TableCell>
+                                            ><PauseSalesButton small isPaused={option.isPaused} setIsPaused={()=>{handlePause(3, index, item, complementIndex,optionIndex)}}/></TableCell>
                                             <TableCell className={[classes.invisibleCell, classes.removeBottomBorder, classes.complementCell].join(" ")}/>
                                         </TableRow>
                                         )
