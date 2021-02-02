@@ -92,7 +92,7 @@ export const editRestaurantRequest = (restaurantId, restaurantBody) => {
             address: address,
             paymentMethods: paymentMethods,
             timeToDelivery: timeToDelivery,
-            deliveryPrice: deliveryPrice,
+            deliveryPrice: deliveryPrice ? deliveryPrice : 0,
             img: img,
           })
           .then(() => {

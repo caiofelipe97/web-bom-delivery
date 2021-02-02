@@ -71,7 +71,7 @@ const StoreForm = props => {
             margin="normal"
             required
             fullWidth
-            id="name"
+            id="restaurant-name"
             label="Nome do Estabelecimento"
             name="name"
             type="text"
