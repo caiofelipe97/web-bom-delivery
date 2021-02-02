@@ -243,6 +243,7 @@ const DeliveryForm = props => {
                 checked={moneyCheck}
                 onChange={handleCheckboxChange}
                 value="dinheiro"
+                disabled
               />
             }
             label="Dinheiro"
