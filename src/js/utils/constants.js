@@ -6,6 +6,7 @@ export const OPTIONS_ENUM = [
         "Sorvetes",
         "Pizza",
         "Doces & Bolos",
+        "Mercado",
         "Japonesa",
         "Almoço",
         "Quentinha",
