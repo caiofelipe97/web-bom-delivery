@@ -275,8 +275,8 @@ const DeliveryForm = props => {
             <FormControlLabel
               control={
                 <Checkbox
-                  checked={cardOptions.includes("Visa - Crédito")}
-                  value="Visa - Crédito"
+                  checked={cardOptions.includes("Visa-Crédito")}
+                  value="Visa-Crédito"
                   onChange={handleCardOptionsChange}
                 />
               }
@@ -285,8 +285,8 @@ const DeliveryForm = props => {
             <FormControlLabel
               control={
                 <Checkbox
-                  checked={cardOptions.includes("Visa - Débito")}
-                  value="Visa - Débito"
+                  checked={cardOptions.includes("Visa-Débito")}
+                  value="Visa-Débito"
                   onChange={handleCardOptionsChange}
                 />
               }
@@ -295,8 +295,8 @@ const DeliveryForm = props => {
             <FormControlLabel
               control={
                 <Checkbox
-                  checked={cardOptions.includes("MasterCard - Crédito")}
-                  value="MasterCard - Crédito"
+                  checked={cardOptions.includes("MasterCard-Crédito")}
+                  value="MasterCard-Crédito"
                   onChange={handleCardOptionsChange}
                 />
               }
@@ -305,8 +305,8 @@ const DeliveryForm = props => {
             <FormControlLabel
               control={
                 <Checkbox
-                  checked={cardOptions.includes("MasterCard - Débito")}
-                  value="MasterCard - Débito"
+                  checked={cardOptions.includes("MasterCard-Débito")}
+                  value="MasterCard-Débito"
                   onChange={handleCardOptionsChange}
                 />
               }
@@ -315,8 +315,8 @@ const DeliveryForm = props => {
             <FormControlLabel
               control={
                 <Checkbox
-                  checked={cardOptions.includes("Hipercard - Crédito")}
-                  value="Hipercard - Crédito"
+                  checked={cardOptions.includes("Hipercard-Crédito")}
+                  value="Hipercard-Crédito"
                   onChange={handleCardOptionsChange}
                 />
               }
@@ -325,8 +325,8 @@ const DeliveryForm = props => {
             <FormControlLabel
               control={
                 <Checkbox
-                  checked={cardOptions.includes("Elo - Crédito")}
-                  value="Elo - Crédito"
+                  checked={cardOptions.includes("Elo-Crédito")}
+                  value="Elo-Crédito"
                   onChange={handleCardOptionsChange}
                 />
               }
@@ -335,12 +335,12 @@ const DeliveryForm = props => {
             <FormControlLabel
               control={
                 <Checkbox
-                  checked={cardOptions.includes("Elo - Débito")}
-                  value="Elo - Débito"
+                  checked={cardOptions.includes("Elo-Débito")}
+                  value="Elo-Débito"
                   onChange={handleCardOptionsChange}
                 />
               }
-              label="Elo - Débito"
+              label="Elo-Débito"
             />
           </FormGroup>
           {cardOptionsError && (
