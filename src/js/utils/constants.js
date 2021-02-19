@@ -1,16 +1,14 @@
 export const OPTIONS_ENUM = [
+        "Almoço",
         "Açai",
         "Bebidas",
+        "Café & Padaria",
+        "Doces & Bolos",
         "Hambúrguer",
         "Lanches",
-        "Sorvetes",
-        "Pizza",
-        "Doces & Bolos",
         "Mercado",
-        "Japonesa",
-        "Almoço",
-        "Quentinha",
-        "Café & Padaria"
+        "Pizza",
+        "Sorvetes"
 ]
 
 export const STATES_ENUM = [
