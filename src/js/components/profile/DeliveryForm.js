@@ -76,27 +76,26 @@ const DeliveryForm = props => {
     setTimeToDelivery,
     deliveryPrice,
     setDeliveryPrice,
-    paymentMethods,
-    setPaymentMethods
+    paymentMethod,
+    setPaymentMethod
   } = props;
 
   useEffect(() => {
     let money = false;
     let card = false;
     let options = [];
-    for (var i = 0; i < paymentMethods.length; i++) {
-      if (paymentMethods[i].method === "dinheiro") {
-        money = true;
-      }
-      if (paymentMethods[i].method === "máquina móvel") {
-        card = true;
-        options = paymentMethods[i].options;
-      }
+    if (paymentMethod.money) {
+      money = true;
     }
+    if (paymentMethod.cardMachine) {
+      card = true;
+      options = paymentMethod.options;
+    }
+    
     setMoneyCheck(money);
     setCardCheck(card);
     setCardOptions(options);
-  }, [paymentMethods]);
+  }, [paymentMethod.cardMachine, paymentMethod.money, paymentMethod.options]);
 
   const handleClickOpen = () => {
     setCardDialogOpen(true);
@@ -111,10 +110,12 @@ const DeliveryForm = props => {
     if (cardOptions.length === 0) {
       setCardOptionsError("É preciso ter pelo menos 1 opção de pagamento");
     } else {
-      setPaymentMethods([
-        ...paymentMethods,
-        { method: "máquina móvel", options: cardOptions }
-      ]);
+      setPaymentMethod({
+        ...paymentMethod,
+        cardMachine: true,
+        options: cardOptions
+      }
+      );
       setCardDialogOpen(false);
     }
   };
@@ -122,17 +123,12 @@ const DeliveryForm = props => {
   const handleCheckboxChange = e => {
     const value = e.target.value;
     const checked = e.target.checked;
-    if (!checked) {
-      setPaymentMethods(
-        paymentMethods.filter(paymentMethod => paymentMethod.method !== value)
-      );
-    } else {
-      if (value === "dinheiro") {
-        setPaymentMethods([...paymentMethods, { method: "dinheiro" }]);
-      } else if (value === "máquina móvel") {
+    if(!checked && value === "máquina móvel"){
+      setPaymentMethod({...paymentMethod, cardMachine: false})
+    }
+    else if (value === "máquina móvel") {
         handleClickOpen();
       }
-    }
   };
 
   const handleCardOptionsChange = e => {
@@ -241,7 +237,6 @@ const DeliveryForm = props => {
             control={
               <Checkbox
                 checked={moneyCheck}
-                onChange={handleCheckboxChange}
                 value="dinheiro"
                 disabled
               />

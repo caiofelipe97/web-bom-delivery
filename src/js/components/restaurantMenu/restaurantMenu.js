@@ -80,7 +80,7 @@ const RestaurantMenu = props => {
     if(restaurant.uid){
       getItems(restaurant.uid);
     }
-  },[getItems, restaurant.uid])
+  },[getItems, restaurant, restaurant.uid])
 
   const handleCategoryDialogClose = () => {
     setCategoryDialogOpen(false);

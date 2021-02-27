@@ -92,7 +92,7 @@ const Profile = props => {
   const [city, setCity] = useState("");
   const [state, setState] = useState("");
 
-  const [paymentMethods, setPaymentMethods] = useState([]);
+  const [paymentMethod, setPaymentMethod] = useState({money: true, cardMachine: false});
   const [timeToDelivery, setTimeToDelivery] = useState({ min: 0, max: 0 });
   const [deliveryPrice, setDeliveryPrice] = useState(0);
 
@@ -131,9 +131,9 @@ const Profile = props => {
 
       setTimeToDelivery(timeToDelivery);
       setDeliveryPrice(deliveryPrice);
-      setPaymentMethods(paymentMethods);
+      setPaymentMethod(paymentMethod);
     }
-  }, [restaurant, img, isCanceled, user]);
+  }, [restaurant, img, isCanceled, user, paymentMethod]);
 
   const handleSubmit = e => {
     e.preventDefault();
@@ -152,11 +152,12 @@ const Profile = props => {
         city: city,
         state: state
       },
-      paymentMethods: paymentMethods,
+      paymentMethod: paymentMethod,
       timeToDelivery: timeToDelivery,
       deliveryPrice: parseInt(deliveryPrice, 10),
       img: img
     };
+    console.log(restaurantBody);
     const restaurantId = restaurant.uid;
     editRestaurant(restaurantId, restaurantBody);
   };
@@ -267,10 +268,10 @@ const Profile = props => {
             setIsChanged(true);
             setDeliveryPrice(deliveryPrice);
           }}
-          paymentMethods={paymentMethods}
-          setPaymentMethods={paymentMethods => {
+          paymentMethod={paymentMethod}
+          setPaymentMethod={paymentMethod => {
             setIsChanged(true);
-            setPaymentMethods(paymentMethods);
+            setPaymentMethod(paymentMethod);
           }}
         />
         <Dialog
