@@ -1,3 +1,5 @@
+# Bom Delivery Web Dashboard
+
 This project is a dashboard for signing up your store, and products to be sold on Bom Delivery App.
 It was made using ReactJS and Redux.
 
