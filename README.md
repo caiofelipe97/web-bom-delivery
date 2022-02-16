@@ -16,9 +16,9 @@ It was made using ReactJS and Redux.
 
 ![bom-delivery-web-1](https://user-images.githubusercontent.com/20324935/154318320-d9b5a7ff-c22f-4bac-8072-08105022f8d6.png)
 ![bom-delivery-web-2](https://user-images.githubusercontent.com/20324935/154318321-953a6b16-a012-4f74-841f-6e7b214dbb18.png)
-![bom-delivery-web-3](https://user-images.githubusercontent.com/20324935/154318322-b629c991-7e3a-4b08-b4e9-1b6e11d5b14a.png)
 ![bom-delivery-web-4](https://user-images.githubusercontent.com/20324935/154318325-c83642ce-6540-438f-878f-de5accca098b.png)
 
+![bomdeliveryappgif](https://user-images.githubusercontent.com/20324935/154318792-6e4307ce-cbee-4d50-81c6-a1cae26761e6.gif)
 
 
 
