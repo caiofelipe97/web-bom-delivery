@@ -3,22 +3,23 @@
 This project is a dashboard for signing up your store, and products to be sold on Bom Delivery App.
 It was made using ReactJS and Redux.
 
+## How to use it
+#### User Test
+##### email: caiofelipee17@gmail.com
+##### password: 123456
+
+
+
+
+
+## App screenshots
 
 
 
 
 
 
-
-
-
-
-
-
-
-
-
-
+#
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
